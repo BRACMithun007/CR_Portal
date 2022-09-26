@@ -1,0 +1,59 @@
+body {
+	/* background-image: url('../images/bg.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: 50% 50%; */
+	background: rgba(61,53,70,1);
+	background: -moz-radial-gradient(center, ellipse cover, rgba(61,53,70,1) 0%, rgba(61,53,70,1) 28%, rgba(42,44,62,1) 64%, rgba(42,44,62,1) 100%);
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(61,53,70,1)), color-stop(28%, rgba(61,53,70,1)), color-stop(64%, rgba(42,44,62,1)), color-stop(100%, rgba(42,44,62,1)));
+	background: -webkit-radial-gradient(center, ellipse cover, rgba(61,53,70,1) 0%, rgba(61,53,70,1) 28%, rgba(42,44,62,1) 64%, rgba(42,44,62,1) 100%);
+	background: -o-radial-gradient(center, ellipse cover, rgba(61,53,70,1) 0%, rgba(61,53,70,1) 28%, rgba(42,44,62,1) 64%, rgba(42,44,62,1) 100%);
+	background: -ms-radial-gradient(center, ellipse cover, rgba(61,53,70,1) 0%, rgba(61,53,70,1) 28%, rgba(42,44,62,1) 64%, rgba(42,44,62,1) 100%);
+	background: radial-gradient(ellipse at center, rgba(61,53,70,1) 0%, rgba(61,53,70,1) 28%, rgba(42,44,62,1) 64%, rgba(42,44,62,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d3546', endColorstr='#2a2c3e', GradientType=1 );
+}
+#seperator {
+	position: relative;
+}
+@media (min-width: 768px) {
+	#seperator:after {
+		position: absolute;
+		height: 100%;
+		content: "";
+		border-right: 1px solid #ddd;
+		right: 15px;
+		top: 0;
+	}
+}
+.btn-google {
+	background-color: #fff;
+	color: #757575;
+	border-radius: 1px;
+	-webkit-border-radius: 1px;
+	-moz-border-radius: 1px;
+	box-shadow: 0 2px 8px 0 rgba(0,0,0,.25);
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	transition: background-color .218s,border-color .218s,box-shadow .218s;
+	-webkit-transition: background-color .218s,border-color .218s,box-shadow .218s;
+	-moz-transition: background-color .218s,border-color .218s,box-shadow .218s;
+	position: relative;
+	text-align: right;
+	vertical-align: middle;
+	cursor: pointer;
+	min-width: 105px;
+	font-size: 14px;
+}
+.btn-google:hover, .btn-google:focus {
+	box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
+	-webkit-box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
+	-moz-box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
+}
+.btn-google i {
+	position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 0;
+    padding: 3px 8px;
+}
