@@ -26,6 +26,10 @@
             background-color: #009A93 !important;
             color: white;
         }
+        .nav-treeview>.nav-item>.nav-link.active, [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:focus, [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:hover {
+            background-color: #009A93 !important;
+            color: white !important;
+        }
         .bg-info {
             background-color: #009A93 !important;
         }
@@ -163,11 +167,28 @@
                     </li>
                     @endif
                     @if(App\Libraries\aclHandler::hasModuleAccess(['calculators']) == true)
-                        <li class="nav-item">
-                            <a href="{{url('calculators/mf-calculators')}}" class="nav-link {{ (Request::is('calculators/*') ? 'active' : '') }}">
+                        <li class="nav-item {{ (Request::is('calculators/*') ? 'menu-is-opening menu-open' : '') }}">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-table"></i>
-                                <p>Calculators</p>
+                                <p>
+                                    Calculator
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{url('calculators/loan-repayment-schedule')}}" class="nav-link {{ (Request::is('calculators/loan-repayment-schedule') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Loan Repay Schedule</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url('calculators/loan-premium')}}" class="nav-link {{ (Request::is('calculators/loan-premium') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Loan Premium</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     @endif
                     @if(App\Libraries\aclHandler::hasModuleAccess(['circular_read','circular_write']) == true)
@@ -185,13 +206,61 @@
                             <p>Request CR</p>
                         </a>
                     </li>
+                        <li class="nav-item {{ (Request::is('request/*') ? 'menu-is-opening menu-open' : '') }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-table"></i>
+                                <p>
+                                    Requests (BR)
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{url('request/business-requirement/loan')}}" class="nav-link {{ (Request::is('request/business-requirement/loan') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Loan</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url('request/business-requirement/special-savings')}}" class="nav-link {{ (Request::is('request/business-requirement/special-savings') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Special Savings</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url('request/business-requirement/general-savings')}}" class="nav-link {{ (Request::is('request/business-requirement/general-savings') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>General Savings</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url('request/business-requirement/insurance')}}" class="nav-link {{ (Request::is('request/business-requirement/insurance') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Insurance</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url('request/business-requirement/report')}}" class="nav-link {{ (Request::is('request/business-requirement/report') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url('request/business-requirement/integration')}}" class="nav-link {{ (Request::is('request/business-requirement/integration') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Integration</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url('request/business-requirement/others')}}" class="nav-link {{ (Request::is('request/business-requirement/others') ? 'active' : '') }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Others (BR)</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     @endif
-{{--                    <li class="nav-item">--}}
-{{--                        <a href="{{url('admin/mf-approval-list')}}" class="nav-link {{ (Request::is('admin/mf-approval-list') ? 'active' : '') }}">--}}
-{{--                            <i class="nav-icon fas fa-table"></i>--}}
-{{--                            <p>Approval</p>--}}
-{{--                        </a>--}}
-{{--                    </li>--}}
+
                     @if(App\Libraries\aclHandler::hasModuleAccess(['user_read','user_write']) == true)
                         <li class="nav-item">
                             <a href="{{url('admin/user-list')}}" class="nav-link {{ (Request::is('admin/user-list') ? 'active' : '') }}">

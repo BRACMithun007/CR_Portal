@@ -108,6 +108,29 @@ Route::group(array('middleware' => ['auth']), function() {
     Route::post('/request/update-req-mf-cr-info', 'reqMfCrController@updateReqCRInfo');
     Route::post('/request/get-mf-req-cr-importable-info', 'reqMfCrController@getReqCRImportInfo');
     Route::post('/request/import-request-cr', 'reqMfCrController@importReqStore');
-
 });
 
+// Loan (BR)
+Route::group(array('middleware' => ['auth']), function() {
+    Route::get('/request/business-requirement/loan', 'BRRequestLoanController@index');
+});
+
+// General Savings (BR)
+Route::group(array('middleware' => ['auth']), function() {
+    Route::get('/request/business-requirement/general-savings', 'BRRequestGeneralSavingsController@index');
+});
+
+// Special Savings (BR)
+Route::group(array('middleware' => ['auth']), function() {
+    Route::get('/request/business-requirement/special-savings', 'BRRequestSpecialSavingsController@index');
+});
+
+// Insurance (BR)
+Route::group(array('middleware' => ['auth']), function() {
+    Route::get('/request/business-requirement/insurance', 'BRRequestInsuranceController@index');
+});
+
+// Report (BR)
+Route::group(array('middleware' => ['auth']), function() {
+    Route::get('/request/business-requirement/report', 'BRRequestReportController@index');
+});
