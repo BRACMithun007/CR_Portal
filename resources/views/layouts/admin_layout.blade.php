@@ -13,6 +13,25 @@
             background-color: #17a2b8;
             color: #fff;
         }
+        .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active {
+            background-color: #009A93 !important;
+        }
+        .icheck-success>input:first-child:checked+input[type=hidden]+label::before, .icheck-success>input:first-child:checked+label::before {
+            background-color: #009A93 !important;
+        }
+        .card-primary.card-outline {
+            border-top: 3px solid #009A93 !important;
+        }
+        .card-info:not(.card-outline)>.card-header {
+            background-color: #009A93 !important;
+            color: white;
+        }
+        .bg-info {
+            background-color: #009A93 !important;
+        }
+        .main-sidebar {
+            background-color: #476072 !important
+        }
     </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -40,11 +59,11 @@
 
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
+            <div class="">
+                <img src="{{url('/admin_src/img/brac_50.png')}}" style="height: 40px;" class="img" alt="User Image">
+            </div>
             <!-- Navbar Search -->
             <li class="nav-item">
-                <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                    <i class="fas fa-search"></i>
-                </a>
                 <div class="navbar-search-block">
                     <form class="form-inline">
                         <div class="input-group input-group-sm">
@@ -91,9 +110,10 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="{{url('/')}}" class="brand-link">
+        <a href="{{url('/')}}" class="brand-link" style="background-color: #334257">
             <span class="brand-text font-weight-light">
-                BRAC
+                <img src="{{url('/admin_src/img/brac_logo.png')}}" style="height: 40px;" class="img" alt="User Image">
+                <b></b>
             </span>
         </a>
 
@@ -136,21 +156,42 @@
                     </li>
                     @if(App\Libraries\aclHandler::hasModuleAccess(['mf_cr_read','mf_cr_write']) == true)
                     <li class="nav-item">
-                        <a href="{{url('admin/mf-cr-list')}}" class="nav-link {{ (Request::is('admin/mf-cr-list') ? 'active' : '') }}">
+                        <a href="{{url('item/mf-item-list')}}" class="nav-link {{ (Request::is('item/mf-item-list') ? 'active' : '') }}">
                             <i class="nav-icon fas fa-th"></i>
-                            <p>CR (MF)</p>
+                            <p>Items (MF)</p>
                         </a>
                     </li>
                     @endif
                     @if(App\Libraries\aclHandler::hasModuleAccess(['calculators']) == true)
                         <li class="nav-item">
-                            <a href="{{url('admin/mf-calculators')}}" class="nav-link {{ (Request::is('admin/mf-calculators') ? 'active' : '') }}
-                            {{ (Request::is('loan/*') ? 'active' : '') }}">
+                            <a href="{{url('calculators/mf-calculators')}}" class="nav-link {{ (Request::is('calculators/*') ? 'active' : '') }}">
                                 <i class="nav-icon fas fa-table"></i>
                                 <p>Calculators</p>
                             </a>
                         </li>
                     @endif
+                    @if(App\Libraries\aclHandler::hasModuleAccess(['circular_read','circular_write']) == true)
+                        <li class="nav-item">
+                            <a href="{{url('circular/mf-circular-list')}}" class="nav-link {{ (Request::is('circular/mf-circular-list') ? 'active' : '') }}">
+                                <i class="nav-icon fas fa-table"></i>
+                                <p>Circular</p>
+                            </a>
+                        </li>
+                    @endif
+                    @if(App\Libraries\aclHandler::hasModuleAccess(['req_cr_read','req_cr_write']) == true)
+                    <li class="nav-item">
+                        <a href="{{url('request/mf-request-cr')}}" class="nav-link {{ (Request::is('request/mf-request-cr') ? 'active' : '') }}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Request CR</p>
+                        </a>
+                    </li>
+                    @endif
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{url('admin/mf-approval-list')}}" class="nav-link {{ (Request::is('admin/mf-approval-list') ? 'active' : '') }}">--}}
+{{--                            <i class="nav-icon fas fa-table"></i>--}}
+{{--                            <p>Approval</p>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
                     @if(App\Libraries\aclHandler::hasModuleAccess(['user_read','user_write']) == true)
                         <li class="nav-item">
                             <a href="{{url('admin/user-list')}}" class="nav-link {{ (Request::is('admin/user-list') ? 'active' : '') }}">
@@ -159,6 +200,7 @@
                             </a>
                         </li>
                     @endif
+
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -172,10 +214,10 @@
 
     <!-- /.content-wrapper -->
     <footer class="main-footer">
-        <strong>Copyright &copy; 1972-2022 <a href="#">BRAC</a>.</strong>
+        <strong>Copyright &copy; 1972-{{date('Y')}} <a href="#" style="color: #EC008C">BRAC</a>.</strong>
         All rights reserved.
         <div class="float-right d-none d-sm-inline-block">
-            <b>Version</b> 3.2.0
+
         </div>
     </footer>
 

@@ -16,7 +16,7 @@ class adminPermission
      */
     public function handle($request, Closure $next)
     {
-        if(auth::user()->type=='Admin' || auth::user()->type=='SuperAdmin'){
+        if(auth::user()->type=='Admin' || auth::user()->type=='SuperAdmin' || auth::user()->type=='Management'){
             return $next($request);
         }
         else{

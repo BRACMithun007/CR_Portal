@@ -9,22 +9,26 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class reportExportForm implements FromView
 {
-    public $fap = "false";
-    public $ea = "false";
+    public $business = "false";
+    public $support = "false";
     public $ongoing = "false";
     public $deployed = "false";
-    public $tbd = "false";
-    public $halt = "false";
-    public $PendingDeployment = "false";
+    public $configurable = "false";
+    public $integration = "false";
+    public $hasDateVal = false;
+    public $deploy_start = "";
+    public $deploy_end = "";
 
-    public function __construct($fap,$ea,$ongoing,$deployed,$tbd,$halt,$PendingDeployment){
-        $this->fap=$fap;
-        $this->ea=$ea;
+    public function __construct($business,$support,$ongoing,$deployed,$configurable,$integration,$hasDateVal,$deploy_start,$deploy_end){
+        $this->business=$business;
+        $this->support=$support;
         $this->ongoing=$ongoing;
         $this->deployed=$deployed;
-        $this->tbd=$tbd;
-        $this->halt=$halt;
-        $this->PendingDeployment=$PendingDeployment;
+        $this->configurable=$configurable;
+        $this->integration=$integration;
+        $this->hasDateVal=$hasDateVal;
+        $this->deploy_start=$deploy_start;
+        $this->deploy_end=$deploy_end;
     }
 
     public function view(): View
@@ -36,14 +40,17 @@ class reportExportForm implements FromView
         })
             ->where('is_archived', 0)
             ->where(function ($query) {
-                if ($this->fap == "true") {$query->orWhere('team_name', 'FAP');}
-                if ($this->ea  == "true") {$query->orWhere('team_name', 'EA');}
+                if ($this->business == "true") {$query->orWhere('cr_type', 'Core_Business');}
+                if ($this->support == "true") {$query->orWhere('cr_type', 'Support_CR');}
+                if ($this->configurable  == "true") {$query->orWhere('cr_type', 'Configurable');}
+                if ($this->integration  == "true") {$query->orWhere('cr_type', 'Integration');}
             })->where(function ($query) {
                 if ($this->ongoing  == "true") {$query->orWhere('cr_status', 'Ongoing');}
-                if ($this->tbd  == "true") {$query->orWhere('cr_status', 'TBD');}
-                if ($this->halt  == "true") {$query->orWhere('cr_status', 'Halt');}
                 if ($this->deployed  == "true") {$query->orWhere('cr_status', 'Deployed');}
-                if ($this->PendingDeployment  == "true") {$query->orWhere('cr_status', 'PendingDeployment');}
+            })->where(function ($query) {
+                if ($this->deployed  == "true" && $this->hasDateVal == true) {
+                    $query->whereBetween('completed_on', [$this->deploy_start, $this->deploy_end]);
+                }
             })
             ->orderBy('PRIORITY', 'ASC')->get([
                 'jira_code as jira_id',
@@ -52,12 +59,13 @@ class reportExportForm implements FromView
                 'priority as priority',
                 'requester_team as requester_team',
                 'team_name as team_name',
+                'assigned_from_brac as mf_focal',
                 'vendor_proposed_timeline as vendor_proposed_timeline',
                 'cr_status as cr_status',
                 'cr_notes as last_update'
             ]);
 
-        return view('exports.formView', [
+        return view('exports.jiraReport', [
             'reportData' => $query
         ]);
     }

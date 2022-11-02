@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\changeRequestComments;
 use App\changeRequestMaster;
 use App\changeRequestUpdates;
+use App\circularMaster;
 use App\Exports\reportExport;
 use App\Exports\reportExportForm;
 use App\Libraries\aclHandler;
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
+
 
 class crMfController extends Controller
 {
@@ -33,27 +36,38 @@ class crMfController extends Controller
     }
 
 
-    public function getUserList(Request $request)
+    public function getMfCrList(Request $request)
     {
-        $fap = trim($request->get('fap'));
-        $ea = trim($request->get('ea'));
+        $business = trim($request->get('business'));
+        $support = trim($request->get('support'));
         $ongoing = trim($request->get('ongoing'));
         $deployed = trim($request->get('deployed'));
-        $tbd = trim($request->get('tbd'));
-        $halt = trim($request->get('halt'));
-        $PendingDeployment = trim($request->get('PendingDeployment'));
+        $configurable = trim($request->get('configurable'));
+        $integration = trim($request->get('integration'));
+
+        $hasDateVal = false;
+        $deploy_start = $request->get('deploy_start');
+        $deploy_end = $request->get('deploy_end');
+        if ($deploy_start != '' && $deploy_end != ''){
+            $hasDateVal = true;
+            $deploy_start = date('Y-m-d',strtotime($request->get('deploy_start')));
+            $deploy_end = date('Y-m-d',strtotime($request->get('deploy_end')));
+        }
 
      //   $data = changeRequestMaster::orderBy('id', 'DESC')->get();
         $data = changeRequestMaster::where('is_archived', 0)
-            ->where(function ($query) use ($fap,$ea){
-                if ($fap == "true") {$query->orWhere('team_name', 'FAP');}
-                if ($ea  == "true") {$query->orWhere('team_name', 'EA');}
-            })->where(function ($query) use ($ongoing,$deployed,$tbd,$halt,$PendingDeployment){
+            ->where(function ($query) use ($business,$support,$configurable,$integration){
+                if ($business == "true") {$query->orWhere('cr_type', 'Core_Business');}
+                if ($support == "true") {$query->orWhere('cr_type', 'Support_CR');}
+                if ($configurable  == "true") {$query->orWhere('cr_type', 'Configurable');}
+                if ($integration  == "true") {$query->orWhere('cr_type', 'Integration');}
+            })->where(function ($query) use ($ongoing,$deployed){
                 if ($ongoing  == "true") {$query->orWhere('cr_status', 'Ongoing');}
-                if ($tbd  == "true") {$query->orWhere('cr_status', 'TBD');}
-                if ($halt  == "true") {$query->orWhere('cr_status', 'Halt');}
                 if ($deployed  == "true") {$query->orWhere('cr_status', 'Deployed');}
-                if ($PendingDeployment  == "true") {$query->orWhere('cr_status', 'PendingDeployment');}
+            })->where(function ($query) use ($deploy_start,$deploy_end,$deployed,$hasDateVal){
+                if ($deployed  == "true" && $hasDateVal == true) {
+                    $query->whereBetween('completed_on', [$deploy_start, $deploy_end]);
+                }
             })->orderBy('priority', 'ASC')->get();
 
 
@@ -64,28 +78,37 @@ class crMfController extends Controller
             })->addColumn('action', function ($data) {
                 $action = '';
                 if(Auth::user()->type == 'SuperAdmin') {
-                    $action = ' <button type="button" class="btn btn-danger btn-xs delete_cr" data-cr_id="' . $data->id . '"><b><i class="fa fa-trash"></i> Delete</b></button> &nbsp;';
+                    $action = ' <button type="button" class="btn btn-xs btn-danger delete_cr" data-cr_id="' . $data->id . '"><b><i class="fa fa-trash"></i> Delete</b></button> &nbsp;';
                 }
-                $action .= '<button type="button" class="btn btn-primary btn-xs open_cr_note_modal" data-cr_id="' . $data->id . '" ><b><i class="fa fa-edit"></i> Notes</b></button> &nbsp;';
+                $action .= '<button type="button" class="btn btn-xs open_cr_note_modal btn-info" data-cr_id="' . $data->id . '" ><b><i class="fa fa-edit"></i> Notes</b></button> &nbsp;';
                 if (aclHandler::hasActionAccess('mf_cr_write') == true) {
-                    $action .= '<button type="button" class="btn btn-info btn-xs open_cr_edit_modal" data-cr_id="' . $data->id . '" ><b><i class="fa fa-edit"></i> CR Edit</b></button>';
+                    $action .= '<button type="button" class="btn btn-xs open_cr_edit_modal btn-info" data-cr_id="' . $data->id . '" ><b><i class="fa fa-edit"></i> CR Edit</b></button>';
                 }
                 return $action;
             })->editColumn('jira_code', function ($data) {
-                return '<a href="https://tim.brac.net/browse/'.$data->jira_code.'" target="_blank">'.$data->jira_code.'</a>';
+                return '<a href="https://tim.brac.net/browse/'.$data->jira_code.'" target="_blank" style="color:#EC008C;">'.$data->jira_code.'</a>';
+            })->editColumn('downloads', function ($data) {
+                $docBtn = '';
+                if(isset($data->cr_doc_link) && $data->cr_doc_link != ''){
+                    $docBtn .= '<a class="btn btn-xs" href="'.url('final_cr_doc/'.$data->cr_doc_link).'" style="background-color:#009A93;color:white;" target="_blank">CR</a>';
+                }
+                if(isset($data->circular_doc) && $data->circular_doc != ''){
+                    $docBtn .= '&nbsp;<a class="btn btn-xs" href="'.url('circular_doc/'.$data->circular_doc).'" style="background-color:#009A93;color:white;" target="_blank">Circular</a>';
+                }
+                return $docBtn;
             })->editColumn('vendor_proposed_timeline', function ($data) {
                 if($data->vendor_proposed_timeline != null && $data->vendor_proposed_timeline != '' && $data->vendor_proposed_timeline != '0000-00-00')
-                    return $update_was = Carbon::parse($data->vendor_proposed_timeline)->format('d M Y');
+                    return Carbon::parse($data->vendor_proposed_timeline)->format('d M Y');
                 else
-                    return $update_was = 'Not set';
+                    return 'Not set';
 
             })->editColumn('updated_at', function ($data) {
-                return $update_was = Carbon::createFromFormat('Y-m-d H:i:s', $data->updated_at)->diffForHumans();
+                return Carbon::createFromFormat('Y-m-d H:i:s', $data->updated_at)->diffForHumans();
             })->editColumn('priority', function ($data) {
                 return ($data->priority < 5) ? $data->priority : 'Not set';
             })
             ->removeColumn('id')
-            ->rawColumns(['action','jira_code'])
+            ->rawColumns(['action','jira_code','downloads'])
             ->make(true);
     }
     /**
@@ -121,7 +144,6 @@ class crMfController extends Controller
             'assigned_from_brac' => 'required'
         ];
 
-
         $validator = Validator::make( $request->all(), $rules );
         if ( $validator->fails() ) {
             return response()->json( ['responseCode'=>0,'message'=>'Please fill up required fields']);
@@ -136,6 +158,14 @@ class crMfController extends Controller
         }
 
         $cr_title = trim($request->get('cr_title'));
+        $cr_doc = $request->file('cr_doc');
+        $cr_doc_name = '';
+        if ( $cr_doc ) {
+            $replacedSubStr = substr(str_replace(" ","-",$cr_title), 0, 10);
+            $cr_doc_name = $replacedSubStr.date('mdhis').rand(11,99) . '.' . $cr_doc->getClientOriginalExtension();
+            $cr_doc->move(public_path('final_cr_doc'), $cr_doc_name);
+        }
+
         $approved_billable_effort = $request->get('approved_billable_effort');
         $category = trim($request->get('category'));
         $vendor_name = trim($request->get('vendor_name'));
@@ -159,6 +189,7 @@ class crMfController extends Controller
 
         $data = array(
             'cr_title'       => $cr_title,
+            'cr_doc_link'    => $cr_doc_name,
             'category'       => $category,
             'vendor_name'    => $vendor_name,
             'cr_details'     => $cr_details,
@@ -281,6 +312,14 @@ class crMfController extends Controller
         $satisfactory_level = $request->get('satisfactory_level');
         $jira_created = $request->get('jira_created');
 
+        $cr_doc = $request->file('cr_doc');
+        $cr_doc_name = '';
+        if ( $cr_doc ) {
+            $replacedSubStr = substr(str_replace(" ","-",$cr_title), 0, 10);
+            $cr_doc_name = $replacedSubStr.date('mdhis').rand(11,99) . '.' . $cr_doc->getClientOriginalExtension();
+            $cr_doc->move(public_path('final_cr_doc'), $cr_doc_name);
+        }
+
         $data = array(
             'cr_title'       => $cr_title,
             'category'       => $category,
@@ -293,6 +332,7 @@ class crMfController extends Controller
             'updated_by' => Auth::user()->id
         );
         if(isset($jira_code) && $jira_code != null){$data['jira_code'] = $jira_code;}
+        if(isset($cr_doc_name) && $cr_doc_name != ''){$data['cr_doc_link'] = $cr_doc_name;}
         if(isset($approved_billable_effort) && $approved_billable_effort != null){$data['approved_billable_effort'] = $approved_billable_effort;}
         if(isset($vendor_proposed_timeline) && $vendor_proposed_timeline != null){
             $data['vendor_proposed_timeline'] = date("Y-m-d", strtotime($vendor_proposed_timeline));
@@ -323,6 +363,11 @@ class crMfController extends Controller
 
             DB::beginTransaction();
             changeRequestMaster::where('id',$cr_id)->update($data);
+            circularMaster::where('cr_master_id',$cr_id)->update([
+                'status'=>$cr_status,
+                'status_changed_by_id'=>Auth::user()->id,
+                'status_changed_by_name'=>Auth::user()->name
+            ]);
             DB::commit();
 
             return response()->json( ['responseCode'=>1,'message'=>'Successfully updated']);
@@ -346,8 +391,9 @@ class crMfController extends Controller
         $cr_id = trim($request->get('cr_id'));
         $crData = changeRequestMaster::where('id',$cr_id)->first();
         $crNoteData = changeRequestUpdates::where('cr_master_id',$cr_id)->orderBy('note_date','DESC')->get();
+        $crCommentData = changeRequestComments::where('cr_master_id',$cr_id)->orderBy('comment_date','DESC')->get();
 
-        $public_html = strval(view("cr_mf.cr-mf-notes-modal", compact('crData','crNoteData')));
+        $public_html = strval(view("cr_mf.cr-mf-notes-modal", compact('crData','crNoteData','crCommentData')));
 
         return response()->json(['responseCode' => 1, 'html' => $public_html, 'message'=>'Successfully fetches']);
     }
@@ -359,6 +405,15 @@ class crMfController extends Controller
         $crDuplicate = changeRequestUpdates::where('cr_master_id','=',$cr_master_id)->orderBy('id','DESC')->first();
 
         $public_html = strval(view("cr_mf.add-note-content",compact('crDuplicate')));
+        return response()->json(['responseCode' => 1, 'html' => $public_html, 'message'=>'Successfully fetches']);
+    }
+
+    public function addCommentTemplate(Request $request)
+    {
+//        $cr_master_id = intval($request->get('cr_master_id'));
+//        $crDuplicate = changeRequestUpdates::where('cr_master_id','=',$cr_master_id)->orderBy('id','DESC')->first();
+
+        $public_html = strval(view("cr_mf.add-comment-content"));
         return response()->json(['responseCode' => 1, 'html' => $public_html, 'message'=>'Successfully fetches']);
     }
 
@@ -423,6 +478,62 @@ class crMfController extends Controller
         }
     }
 
+    public function addNewCRComment(Request $request)
+    {
+        if (Auth::user()->type != 'Management') {
+            return response()->json( ['responseCode'=>0,'message'=>'No permission']);
+        }
+
+        $rules = [
+            'comment_type'       => 'required',
+            'comment_date'       => 'required',
+            'cr_comment'         => 'required',
+            'cr_master_id'       => 'required'
+        ];
+
+        $validator = Validator::make( $request->all(), $rules );
+        if ( $validator->fails() ) {
+            return response()->json( ['responseCode'=>0,'message'=>'Please fill up required fields']);
+        }
+
+        $comment_type = trim($request->get('comment_type'));
+        $comment_date = trim($request->get('comment_date'));
+        $cr_comment = $request->get('cr_comment');
+        $cr_master_id = trim($request->get('cr_master_id'));
+
+        $checkDuplicate = changeRequestComments::whereDate('comment_date','=',date("Y-m-d", strtotime($comment_date)))
+            ->where('cr_master_id',$cr_master_id)->count();
+
+        if ( $checkDuplicate > 0 ) {
+            return response()->json( ['responseCode'=>0,'message'=>'Comment already inserted for '.$comment_date]);
+        }
+
+        $data = array(
+            'cr_master_id'   => $cr_master_id,
+            'comment_type'      => $comment_type,
+            'comment'       => $cr_comment,
+            'comment_date'      => date("Y-m-d", strtotime($comment_date)),
+            'comment_by' => Auth::user()->name,
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+        );
+
+        try {
+
+            DB::beginTransaction();
+            changeRequestComments::create($data);
+            DB::commit();
+
+            $crCommentData = changeRequestComments::where('cr_master_id',$cr_master_id)->orderBy('comment_date','DESC')->get();
+            $public_html = strval(view("cr_mf.comment-list", compact('crCommentData')));
+
+            return response()->json( ['responseCode'=>1,'commentList'=>$public_html,'message'=>'Successfully created']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json( ['responseCode'=>0,'message'=>'Something wrong']);
+        }
+    }
 
     public function getNoteDetails(Request $request)
     {
@@ -447,6 +558,28 @@ class crMfController extends Controller
         return response()->json(['responseCode' => 1, 'html' => $public_html, 'message'=>'Successfully fetches']);
     }
 
+    public function getCommentDetails(Request $request)
+    {
+        $rules = [
+            'comment_id'        => 'required'
+        ];
+        $validator = Validator::make( $request->all(), $rules );
+        if ( $validator->fails() ) {
+            return response()->json( ['responseCode'=>0,'message'=>'Something wrong']);
+        }
+
+        $comment_id = trim($request->get('comment_id'));
+        $crCommentData = changeRequestComments::leftJoin('users', 'users.id', '=', 'change_request_comments.updated_by')
+            ->where('change_request_comments.id',$comment_id)->first([
+                'change_request_comments.*',
+                'users.name',
+                'users.email'
+            ]);
+
+        $public_html = strval(view("cr_mf.inserted-comment-content", compact('crCommentData')));
+
+        return response()->json(['responseCode' => 1, 'html' => $public_html, 'message'=>'Successfully fetches']);
+    }
 
     public function updateCrNote(Request $request)
     {
@@ -470,11 +603,11 @@ class crMfController extends Controller
         $note_type = trim($request->get('note_type'));
         $note_date = trim($request->get('note_date'));
         $cr_notes = $request->get('cr_notes');
-        $cr_id = trim($request->get('note_id'));
+        $note_id = trim($request->get('note_id'));
         $cr_master_id = trim($request->get('cr_master_id'));
 
         $checkDuplicate = changeRequestUpdates::whereDate('note_date','=',date("Y-m-d", strtotime($note_date)))
-            ->where('id','!=',$cr_id)->where('cr_master_id','=',$cr_master_id)->count();
+            ->where('id','!=',$note_id)->where('cr_master_id','=',$cr_master_id)->count();
 
         if ( $checkDuplicate > 0 ) {
             return response()->json( ['responseCode'=>0,'message'=>'Note already inserted for '.$note_date]);
@@ -490,7 +623,7 @@ class crMfController extends Controller
         try {
 
             DB::beginTransaction();
-            changeRequestUpdates::where('id',$cr_id)->update($data);
+            changeRequestUpdates::where('id',$note_id)->update($data);
             changeRequestMaster::where('id',$cr_master_id)->update([
                 'updated_by' => Auth::user()->id,
                 'updated_at' => Carbon::now()
@@ -508,6 +641,62 @@ class crMfController extends Controller
         }
     }
 
+    public function updateCrComment(Request $request)
+    {
+        if (Auth::user()->type != 'Management') {
+            return response()->json( ['responseCode'=>0,'message'=>'No permission']);
+        }
+
+        $rules = [
+            'comment_type'       => 'required',
+            'comment_date'       => 'required',
+            'cr_comment'        => 'required',
+            'cr_master_id'    => 'required',
+            'comment_id'         => 'required'
+        ];
+
+        $validator = Validator::make( $request->all(), $rules );
+        if ( $validator->fails() ) {
+            return response()->json( ['responseCode'=>0,'message'=>'Please fill up required fields']);
+        }
+
+        $comment_type = trim($request->get('comment_type'));
+        $comment_date = trim($request->get('comment_date'));
+        $cr_comment = $request->get('cr_comment');
+        $comment_id = trim($request->get('comment_id'));
+        $cr_master_id = trim($request->get('cr_master_id'));
+
+        $checkDuplicate = changeRequestComments::whereDate('comment_date','=',date("Y-m-d", strtotime($comment_date)))
+            ->where('id','!=',$comment_id)->where('cr_master_id','=',$cr_master_id)->count();
+
+        if ( $checkDuplicate > 0 ) {
+            return response()->json( ['responseCode'=>0,'message'=>'Comment already inserted for '.$comment_date]);
+        }
+
+        $data = array(
+            'comment_type'      => $comment_type,
+            'comment'       => $cr_comment,
+            'comment_date'      => date("Y-m-d", strtotime($comment_date)),
+            'updated_by' => Auth::user()->id
+        );
+
+        try {
+
+            DB::beginTransaction();
+            changeRequestComments::where('id',$comment_id)->where('created_by',Auth::user()->id)->update($data);
+            DB::commit();
+
+            $crCommentData = changeRequestComments::where('cr_master_id',$cr_master_id)->orderBy('comment_date','DESC')->get();
+            $public_html = strval(view("cr_mf.comment-list", compact('crCommentData')));
+
+            return response()->json( ['responseCode'=>1,'commentList'=>$public_html,'message'=>'Successfully updated']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json( ['responseCode'=>0,'message'=>'Something wrong']);
+        }
+    }
+
     public function excelExport(Request $request)
     {
 
@@ -517,15 +706,23 @@ class crMfController extends Controller
 
         try {
 
-            $fap = trim($request->get('fap'));
-            $ea = trim($request->get('ea')); 
+            $business = trim($request->get('business'));
+            $support = trim($request->get('support'));
             $ongoing = trim($request->get('ongoing'));
             $deployed = trim($request->get('deployed'));
-            $tbd = trim($request->get('tbd'));
-            $halt = trim($request->get('halt'));
-            $PendingDeployment = trim($request->get('PendingDeployment'));
+            $configurable = trim($request->get('configurable'));
+            $integration = trim($request->get('integration'));
 
-            return Excel::download(new reportExportForm($fap,$ea,$ongoing,$deployed,$tbd,$halt,$PendingDeployment), 'JIRA_TASK_SUMMARY.xlsx');
+            $hasDateVal = false;
+            $deploy_start = $request->get('deploy_start');
+            $deploy_end = $request->get('deploy_end');
+            if ($deploy_start != '' && $deploy_end != ''){
+                $hasDateVal = true;
+                $deploy_start = date('Y-m-d',strtotime($request->get('deploy_start')));
+                $deploy_end = date('Y-m-d',strtotime($request->get('deploy_end')));
+            }
+
+            return Excel::download(new reportExportForm($business,$support,$ongoing,$deployed,$configurable,$integration,$hasDateVal,$deploy_start,$deploy_end), 'JIRA_TASK_SUMMARY.xlsx');
 
         } catch (\Exception $e) {
             die('Something wrong');

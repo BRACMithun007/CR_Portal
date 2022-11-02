@@ -5,6 +5,9 @@
     @include('layouts.admin_common_css')
 @endsection
 
+<style>
+
+</style>
 
 @section('content')
     <div class="content-wrapper">
@@ -31,32 +34,32 @@
             <div class="container-fluid">
                 <!-- Small boxes (Stat box) -->
                 <div class="row">
-                    <div class="col-lg-3 col-6">
+                    <div class="col-lg-4 col-6">
                         <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
+                        <div class="small-box bg-info itemBoxOngoing">
+                            <div class="inner" style="cursor: pointer;">
                                 <h3>{{$ongoingCR}}</h3>
-                                <p>Ongoing CR</p>
+                                <h5>Item Ongoing</h5>
                             </div>
                             <div class="icon">
                                 <i class="ion-pie-graph"></i>
                             </div>
-                            <a href="#" class="small-box-footer">Details..<i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="#" class="small-box-footer"></a>
                         </div>
                     </div>
-                    <!-- ./col -->
+
                 </div>
 
 
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="image loading_brac_img_for_chart" style="text-align: center;display: none;">
                             <img src="{{url('/admin_src/img/brac_logo.gif')}}" class="img" alt="User Image">
                         </div>
                         <div class="crChartContent"></div>
                     </div>
 
-                    <div class="col-md-7">
+                    <div class="col-md-8">
                         <div class="image loading_brac_img_for_area_chart" style="text-align: center;display: none;">
                             <img src="{{url('/admin_src/img/brac_logo.gif')}}" class="img" alt="User Image">
                         </div>
@@ -76,6 +79,7 @@
     @include('layouts.admin_common_js')
 @endsection
 <script src="{{asset('admin_src/plugins/jquery/jquery.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
 <script>
 
     $(document).ready(function() {
@@ -125,7 +129,30 @@
             });
         }
 
+        $(document).on('click', '.itemBoxOngoing', function () {
 
+            $('#loading_img').css({'display':'block'});
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{{ url('/admin/chart-list-item-content') }}",
+                data: {
+                    status_name: 'Ongoing',
+                    _token: $('input[name="_token"]').val()
+                },
+                success: function (response) {
+                    $('#loading_img').css({'display':'none'});
+                    // btn.prop('disabled', false);
+                    if(response.responseCode == 1){
+                        $('.chart_list_item_data_content').html(response.html);
+                        $('#chart-list-item-modal-lg').modal();
+                    }else{
+
+                    }
+                }
+            });
+
+        });
 
 
 

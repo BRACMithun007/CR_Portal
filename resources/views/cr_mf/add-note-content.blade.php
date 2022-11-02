@@ -19,7 +19,7 @@
             <textarea name="cr_notes" class="form-control cr_notes" rows="4">{{$crDuplicate->cr_notes}}</textarea>
         </div>
         <div style="float: right;">
-            <button type="button" class="btn btn-primary add_note_btn"> <span class="spinner-icon"></span> Add note </button>
+            <button type="button" class="btn add_note_btn" style="background-color:#009A93;color:white;"> <span class="spinner-icon"></span> Add note </button>
         </div>
     </div>
 </div>

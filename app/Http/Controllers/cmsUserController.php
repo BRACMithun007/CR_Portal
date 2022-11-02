@@ -45,10 +45,10 @@ class cmsUserController extends Controller
                 $action = '';
                 if($data->type != 'SuperAdmin') {
                     if (Auth::user()->type == 'SuperAdmin') {
-                        $action = ' <button type="button" class="btn btn-danger btn-xs deleteUser" data-user_id="' . $data->id . '"><b><i class="fa fa-trash"></i> Delete</b></button> &nbsp;';
+                        $action = ' <button type="button" class="btn btn-xs deleteUser" style="background-color: #009A93;color: white;" data-user_id="' . $data->id . '"><b><i class="fa fa-trash"></i> Delete</b></button> &nbsp;';
                     }
                     if (aclHandler::hasActionAccess('user_write') == true) {
-                        $action .= '<button type="button" class="btn btn-info btn-xs open_user_modal" data-user_id="' . $data->id . '" ><b><i class="fa fa-edit"></i> Edit</b></button>';
+                        $action .= '<button type="button" class="btn btn-xs open_user_modal" style="background-color: #009A93;color: white;" data-user_id="' . $data->id . '" ><b><i class="fa fa-edit"></i> Edit</b></button>';
                     }
                 }
                 return $action;

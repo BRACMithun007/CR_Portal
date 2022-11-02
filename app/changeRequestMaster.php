@@ -14,6 +14,7 @@ class changeRequestMaster extends Model
         'cr_title',
         'cr_details',
         'cr_doc_link',
+        'circular_doc',
         'jira_code',
         'jira_created',
         'initial_requirement_shared_from_mf',

@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-12">
                 @if(App\Libraries\aclHandler::hasActionAccess('mf_cr_write') == true)
-                    <button class="btn btn-sm btn-info edit_enable_disable" style="float: right;"><i class="fas fa-pen"></i> Edit</button>
+                    <button class="btn btn-sm edit_enable_disable" style="float: right;background-color:#009A93;color:white;"><i class="fas fa-pen"></i> Edit</button>
                 @endif
             </div>
             <div class="form-group col-md-6">
@@ -28,7 +28,7 @@
             <i>Updated by : {{$crNoteData->name}}</i>
         </div>
         <div class="update_note_btn_section" style="float: right;display: none;">
-            <button type="button" class="btn btn-primary update_note_btn"> <span class="spinner-icon"></span> Update note </button>
+            <button type="button" class="btn update_note_btn" style="background-color:#009A93;color:white;"> <span class="spinner-icon"></span> Update note </button>
         </div>
     </div>
 </div>

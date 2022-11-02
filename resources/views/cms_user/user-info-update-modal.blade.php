@@ -13,6 +13,7 @@
     <select name="user_type_update" class="form-control user_type_update">
         <option value="">Please select</option>
         <option value="Admin" @if($userData->type == 'Admin') selected @endif>Admin</option>
+        <option value="Management" @if($userData->type == 'Management') selected @endif>Management</option>
         <option value="General" @if($userData->type == 'General') selected @endif>General</option>
     </select>
 </div>
@@ -24,6 +25,10 @@
         <option value="user_write" @if(in_array('user_write',$userPermission)) selected @endif>user_write</option>
         <option value="mf_cr_read" @if(in_array('mf_cr_read',$userPermission)) selected @endif>mf_cr_read</option>
         <option value="mf_cr_write" @if(in_array('mf_cr_write',$userPermission)) selected @endif>mf_cr_write</option>
+        <option value="circular_read" @if(in_array('circular_read',$userPermission)) selected @endif>circular_read</option>
+        <option value="circular_write" @if(in_array('circular_write',$userPermission)) selected @endif>circular_write</option>
+        <option value="req_cr_read" @if(in_array('req_cr_read',$userPermission)) selected @endif>req_cr_read</option>
+        <option value="req_cr_write" @if(in_array('req_cr_write',$userPermission)) selected @endif>req_cr_write</option>
     </select>
 </div>
 <div class="form-group">

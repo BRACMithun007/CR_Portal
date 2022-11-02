@@ -10,14 +10,14 @@
 
     <style>
         .paginate_button.previous{
-            background-color: #17a2b8;
+            background-color: #009A93;
             color: white;
             padding: 2px;
             border-radius: 2px;
             cursor: pointer;
         }
         .paginate_button.next{
-            background-color: #17a2b8;
+            background-color: #009A93;
             color: white;
             padding: 2px;
             border-radius: 2px;
@@ -25,19 +25,25 @@
         }
 
         .paginate_button.current{
-            background-color: #1a525a;
+            background-color: #893366;
             color: white;
             padding: 2px;
             border-radius: 2px;
             cursor: no-drop;
         }
         .paginate_button{
-            background-color: #17a2b8;
+            background-color: #009A93;
             color: white;
             padding: 2px;
             border-radius: 2px;
             cursor: pointer;
             margin-right: 10px;
+        }
+        .input_error_mark{
+            border-color: red;
+        }
+        .input_valid_mark{
+            border-color: #d9c6c6;
         }
         .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
             color: black;
@@ -75,7 +81,7 @@
                                 <div class="row">
                                     <div class="col-md-2 ">
                                         @if(App\Libraries\aclHandler::hasActionAccess('user_write') == true)
-                                            <button type="button" class="btn btn-info"  data-toggle="modal" data-target="#add-modal-lg">
+                                            <button type="button" class="btn btn-info" style="background-color: #009A93;color: white;"  data-toggle="modal" data-target="#add-modal-lg">
                                                 Add New User
                                             </button>
                                         @endif
@@ -91,7 +97,7 @@
                                            class="table table-striped table-bordered dt-responsive " cellspacing="0"
                                            width="100%">
                                         <thead>
-                                        <tr style="background: #248c9d">
+                                        <tr style="background-color: #009A93;color: white;">
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
@@ -142,6 +148,7 @@
                         <select name="user_type" class="form-control user_type">
                             <option value="">Please select</option>
                             <option value="Admin">Admin</option>
+                            <option value="Management">Management</option>
                             <option value="General">General</option>
                         </select>
                     </div>
@@ -153,6 +160,10 @@
                             <option value="user_write">user_write</option>
                             <option value="mf_cr_read">mf_cr_read</option>
                             <option value="mf_cr_write">mf_cr_write</option>
+                            <option value="circular_read">circular_read</option>
+                            <option value="circular_write">circular_write</option>
+                            <option value="req_cr_read">req_cr_read</option>
+                            <option value="req_cr_write">req_cr_write</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -170,8 +181,8 @@
 
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary store_new_user"> <span class="spinner-icon"></span> Save </button>
+                    <button type="button" class="btn" style="background-color: #009A93;color: white;" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn store_new_user" style="background-color: #009A93;color: white;"> <span class="spinner-icon"></span> Save </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -196,8 +207,8 @@
 
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary update_user"> <span class="spinner-icon"></span> Update </button>
+                    <button type="button" class="btn" style="background-color: #009A93;color: white;" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn update_user" style="background-color: #009A93;color: white;"> <span class="spinner-icon"></span> Update </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -324,8 +335,8 @@
                                 $('#add-modal-lg').modal('hide');
                             }, 3200);
 
-                            var dataTable = $('#user_list').dataTable();
-                            dataTable.fnDestroy();
+                            $('#user_list').dataTable().fnClearTable();
+                            $('#user_list').dataTable().fnDestroy();
                             getUserList();
 
                         } else {
@@ -433,8 +444,8 @@
                                 $('#edit-modal-lg').modal('hide');
                             }, 3200);
 
-                            var dataTable = $('#user_list').dataTable();
-                            dataTable.fnDestroy();
+                            $('#user_list').dataTable().fnClearTable();
+                            $('#user_list').dataTable().fnDestroy();
                             getUserList();
 
                         } else {
@@ -483,8 +494,8 @@
                                 $('#add-modal-lg').modal('hide');
                             }, 3200);
 
-                            var dataTable = $('#user_list').dataTable();
-                            dataTable.fnDestroy();
+                            $('#user_list').dataTable().fnClearTable();
+                            $('#user_list').dataTable().fnDestroy();
                             getUserList();
                         }else{
                             $('.delete_response_msg_area').html('<div class="alert alert-danger">\n' +

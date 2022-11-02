@@ -8,17 +8,15 @@
     <link rel="stylesheet" href="{{ asset("admin_src/datepicker-oss/css/bootstrap-datetimepicker.min.css") }}" />
 
     <style>
-
-
         .paginate_button.previous{
-            background-color: #17a2b8;
+            background-color: #009A93;
             color: white;
             padding: 2px;
             border-radius: 2px;
             cursor: pointer;
         }
         .paginate_button.next{
-            background-color: #17a2b8;
+            background-color: #009A93;
             color: white;
             padding: 2px;
             border-radius: 2px;
@@ -26,14 +24,14 @@
         }
 
         .paginate_button.current{
-            background-color: #1a525a;
+            background-color: #893366;
             color: white;
             padding: 2px;
             border-radius: 2px;
             cursor: no-drop;
         }
         .paginate_button{
-            background-color: #17a2b8;
+            background-color: #009A93;
             color: white;
             padding: 2px;
             border-radius: 2px;
@@ -57,12 +55,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>CR list (MF)</h1>
+                        <h1>Item list (MF)</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Admin</a></li>
-                            <li class="breadcrumb-item active">FAP-EA</li>
+                            <li class="breadcrumb-item active">Item</li>
                         </ol>
                     </div>
                 </div>
@@ -77,48 +75,61 @@
                         <div class="card card-primary card-outline">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-md-2 ">
+                                    <div class="col-md-1">
                                         @if(App\Libraries\aclHandler::hasActionAccess('mf_cr_write') == true)
-                                            <button type="button" class="btn btn-info"  data-toggle="modal" data-target="#add-modal-lg">
-                                                Add New CR
+                                            <button type="button" class="btn" style="background-color: #009A93;color: white;"  data-toggle="modal" data-target="#add-modal-lg">
+                                                <b>+</b> Item
                                             </button>
                                         @endif
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col-md-9">
                                         <div class="form-group clearfix" style="margin-top: 2px;">
-                                            <div class="icheck-success d-inline">
-                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="fap" id="checkboxSuccess1">
-                                                <label for="checkboxSuccess1"> FAP &nbsp;</label>
+                                            <div class="icheck-success d-inline" style="margin-right: 20px;margin-left: 10px;">
+                                                <input type="checkbox" class="checkBoxValAll" name="checkBoxVal" value="all" id="checkboxSuccess10">
+                                                <label for="checkboxSuccess10"> All &nbsp;</label>
                                             </div>
                                             <div class="icheck-success d-inline">
-                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="ea" id="checkboxSuccess2">
-                                                <label for="checkboxSuccess2"> EA &nbsp;</label>
+                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="business" id="checkboxSuccess1">
+                                                <label for="checkboxSuccess1"> Business &nbsp;</label>
+                                            </div>
+                                            <div class="icheck-success d-inline">
+                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="support" id="checkboxSuccess8">
+                                                <label for="checkboxSuccess8"> Support &nbsp;</label>
+                                            </div>
+                                            <div class="icheck-success d-inline">
+                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="configurable" id="checkboxSuccess2">
+                                                <label for="checkboxSuccess2"> Configurable &nbsp;</label>
+                                            </div>
+                                            <div class="icheck-success d-inline">
+                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="integration" id="checkboxSuccess9">
+                                                <label for="checkboxSuccess9"> Integration &nbsp;</label>
                                             </div>
                                             <div class="icheck-success d-inline">
                                                 <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="ongoing" checked="true" id="checkboxSuccess6">
                                                 <label for="checkboxSuccess6"> Ongoing &nbsp;</label>
                                             </div>
+{{--                                            <div class="icheck-success d-inline">--}}
+{{--                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="PendingDeployment" id="checkboxSuccess10">--}}
+{{--                                                <label for="checkboxSuccess10"> Pending Deployment &nbsp;</label>--}}
+{{--                                            </div>--}}
                                             <div class="icheck-success d-inline">
                                                 <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="deployed" id="checkboxSuccess7">
                                                 <label for="checkboxSuccess7"> Deployed &nbsp;</label>
                                             </div>
-                                            <div class="icheck-success d-inline">
-                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="tbd" id="checkboxSuccess8">
-                                                <label for="checkboxSuccess8"> TBD &nbsp;</label>
+
+
+                                            <div class="input-group deployDivSection" style="display: none;">
+                                                <b>From: </b><input name="deploy_start" type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control-sm deploy_start my_datepicker" placeholder="Deploy start date">
+                                                <b>To: </b><input name="deploy_end" type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control-sm deploy_end my_datepicker" placeholder="Deploy end date">
+                                                <button class="btn btn-info btn-sm searchByDeployDate">Search</button>
                                             </div>
-                                            <div class="icheck-success d-inline">
-                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="halt" id="checkboxSuccess9">
-                                                <label for="checkboxSuccess9"> Halt &nbsp;</label>
-                                            </div>
-                                            <div class="icheck-success d-inline">
-                                                <input type="checkbox" class="checkBoxVal" name="checkBoxVal" value="PendingDeployment" id="checkboxSuccess10">
-                                                <label for="checkboxSuccess10"> Pending Deployment &nbsp;</label>
-                                            </div>
+
+
                                         </div>
                                     </div>
-                                    <div class="col-md-2 ">
-                                        <button type="button" class="btn btn-primary float-right excel_export" style="margin-right: 5px;">
-                                            <i class="fas fa-download"></i> Excel Export
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary float-right excel_export" style="background-color: #009A93;">
+                                            <i class="fas fa-download"></i> Export
                                         </button>
                                     </div>
                                 </div>
@@ -132,7 +143,7 @@
                                            class="table table-striped table-bordered dt-responsive " cellspacing="0"
                                            width="100%">
                                         <thead>
-                                        <tr style="background: #248c9d">
+                                        <tr style="background: #009A93;color: white;">
                                             <th>Title</th>
                                             <th>Jira</th>
                                             <th>Category</th>
@@ -141,6 +152,7 @@
                                             <th>Timeline</th>
                                             {{--                                            <th>Focal</th>--}}
                                             <th>Updated</th>
+                                            <th>Documents</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
@@ -166,7 +178,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">New CR</h4>
+                    <h4 class="modal-title">New Item</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -176,7 +188,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleInput">CR Title</label>
+                                <label for="exampleInput">Item Title</label>
                                 <textarea name="cr_title" class="form-control cr_title"></textarea>
                             </div>
                             <div class="form-group">
@@ -192,7 +204,7 @@
                                 <input name="approved_billable_effort" type="text" class="form-control approved_billable_effort" placeholder="Approved billable effort">
                             </div>
                             <div class="form-group">
-                                <label for="exampleInput">CR category</label>
+                                <label for="exampleInput">Item category</label>
                                 <select class="form-control category" name="category">
                                     <option value="">Select One</option>
                                     <option value="Insurance">Insurance</option>
@@ -223,7 +235,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="exampleInput">CR Status</label>
+                                <label for="exampleInput">Item Status</label>
                                 <select class="form-control cr_status" name="cr_status">
                                     <option value="">Select One</option>
                                     <option value="Ongoing">Ongoing</option>
@@ -245,10 +257,9 @@
                             </div>
                         </div>
 
-
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleInput">CR Details</label>
+                                <label for="exampleInput">Item Details</label>
                                 <textarea name="cr_details" class="form-control cr_details"></textarea>
                             </div>
                             <div class="form-group">
@@ -265,7 +276,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="exampleInput">CR locked by vendor</label>
+                                <label for="exampleInput">Item locked by vendor</label>
                                 <input name="cr_locked_by_vendor" type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control cr_locked_by_vendor my_datepicker" placeholder="CR locked by vendor">
                             </div>
                             <div class="form-group">
@@ -277,16 +288,20 @@
                                 <input name="requester_team" type="text" class="form-control requester_team" placeholder="Requester team">
                             </div>
                             <div class="form-group">
-                                <label for="exampleInput">CR Type</label>
+                                <label for="exampleInput">Item Type</label>
                                 <select class="form-control cr_type" name="cr_type">
                                     <option value="">Select One</option>
-                                    <option value="CR">CR</option>
-                                    <option value="CR_Addition">CR (Addition)</option>
-                                    <option value="CR_One_Time">CR (One Time)</option>
-                                    <option value="CR_Change">CR (Change)</option>
-                                    <option value="Non_CR">Non CR</option>
-                                    <option value="Data_Correction">Data Correction</option>
+{{--                                    <option value="CR">CR</option>--}}
+                                    <option value="Core_Business">Core Business</option>
                                     <option value="Support_CR">Support CR</option>
+                                    <option value="Configurable">Configurable Item</option>
+                                    <option value="Integration">Integration</option>
+                                    <option value="Data_Correction">Data Correction</option>
+{{--                                    <option value="CR_Addition">CR (Addition)</option>--}}
+{{--                                    <option value="CR_One_Time">CR (One Time)</option>--}}
+{{--                                    <option value="CR_Change">CR (Change)</option>--}}
+{{--                                    <option value="Non_CR">Non CR</option>--}}
+
                                 </select>
                             </div>
                             <div class="form-group">
@@ -319,6 +334,18 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="exampleInputFile">Final CR/Item Document (Allowed PDF only)</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input cr_doc" name="cr_doc " accept="application/pdf" id="cr_doc">
+                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -337,7 +364,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Edit CR</h4>
+                    <h4 class="modal-title">Edit Item</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -349,8 +376,8 @@
 
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary update_cr"> <span class="spinner-icon"></span> Update </button>
+                    <button type="button" class="btn" style="background-color: #009A93;color: white;" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn update_cr" style="background-color: #009A93;color: white;"> <span class="spinner-icon"></span> Update </button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -399,6 +426,12 @@
 
         $(document).ready(function() {
 
+            $('input[type="file"]').change(function(e){
+                var fileName = e.target.files[0].name;
+                $('.custom-file-label').html(fileName);
+            });
+
+
             $('.my_datepicker').datetimepicker({
                 //   viewMode: 'years',
                 format: 'DD-MM-YYYY',
@@ -418,34 +451,46 @@
 
             function getMFCrList() {
 
-                var fap = false;
-                var ea = false;
+                var business = false;
+                var support = false;
                 var ongoing = false;
                 var deployed = false;
-                var tbd = false;
-                var halt = false;
-                var PendingDeployment = false;
+                var configurable = false;
+                var integration = false;
+                var deploy_start = '';
+                var deploy_end = '';
 
                 $("input:checkbox[name=checkBoxVal]:checked").each(function(){
-                    if ($(this).val() == 'fap'){
-                        fap = true;
-                    }else if($(this).val() == 'ea'){
-                        ea = true;
+                    if ($(this).val() == 'business'){
+                        business = true;
+                    }else if($(this).val() == 'support'){
+                        support = true;
                     }else if($(this).val() == 'ongoing'){
                         ongoing = true;
+                        $('.deploy_start').val('');
+                        $('.deploy_end').val('');
                     }else if($(this).val() == 'deployed'){
+                        $('.deployDivSection').css('display','block')
                         deployed = true;
-                    }else if($(this).val() == 'tbd'){
-                        tbd = true;
-                    }else if($(this).val() == 'halt'){
-                        halt = true;
-                    }else if($(this).val() == 'PendingDeployment'){
-                        PendingDeployment = true;
+                        deploy_start = $('.deploy_start').val();
+                        deploy_end = $('.deploy_end').val();
+                    }else if($(this).val() == 'configurable'){
+                        configurable = true;
+                    }else if($(this).val() == 'integration'){
+                        integration = true;
                     }
                 });
 
-                $('.table_area').fadeOut(2);
-                $('.table_area').fadeIn(3200);
+                $("input:checkbox:not(:checked)").each(function(){
+                    if ($(this).val() == 'deployed'){
+                        $('.deploy_start').val('');
+                        $('.deploy_end').val('');
+                        $('.deployDivSection').css('display','none')
+                    }
+                });
+
+                // $('.table_area').fadeOut(2);
+                // $('.table_area').fadeIn(3200);
 
                 $('#mf_cr_list').DataTable({
                     iDisplayLength: 15,
@@ -458,16 +503,17 @@
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        url: '{{url("/admin/get-mf-cr-list")}}',
+                        url: '{{url("/item/get-mf-item-list")}}',
                         method: 'post',
                         data: function (d) {
-                            d.fap = fap;
-                            d.ea = ea;
+                            d.business = business;
+                            d.support = support;
                             d.ongoing = ongoing;
                             d.deployed = deployed;
-                            d.tbd = tbd;
-                            d.halt = halt;
-                            d.PendingDeployment = PendingDeployment;
+                            d.configurable = configurable;
+                            d.integration = integration;
+                            d.deploy_start = deploy_start;
+                            d.deploy_end = deploy_end;
                             // d._token = $('input[name="_token"]').val();
                         }
                     },
@@ -480,6 +526,7 @@
                         {data: 'vendor_proposed_timeline', name: 'vendor_proposed_timeline', searchable: true ,orderable: false},
                         // {data: 'assigned_from_brac', name: 'assigned_from_brac', searchable: true ,orderable: false},
                         {data: 'updated_at', name: 'updated_at', searchable: true ,orderable: false},
+                        {data: 'downloads', name: 'downloads', searchable: true ,orderable: false},
                         {data: 'action', name: 'action', orderable: false, searchable: false}
                     ],
                     "aaSorting": []
@@ -566,41 +613,49 @@
                     return false;
                 }
 
+                let formData = new FormData();
+                var file_for_cr_doc = document.getElementById("cr_doc");
+                if( file_for_cr_doc.files.length != 0 ){
+                    formData.append('cr_doc', $('.cr_doc')[0].files[0]);
+                }
+                formData.append('cr_title', cr_title);
+                formData.append('jira_code', jira_code);
+                formData.append('jira_created', jira_created);
+                formData.append('approved_billable_effort', approved_billable_effort);
+                formData.append('category', category);
+                formData.append('vendor_name', vendor_name);
+                formData.append('vendor_proposed_timeline', vendor_proposed_timeline);
+                formData.append('priority', priority);
+                formData.append('cr_status', cr_status);
+                formData.append('business_analyst', business_analyst);
+                formData.append('uat_instance', uat_instance);
+                formData.append('cr_details', cr_details);
+                formData.append('initial_requirement_shared_from_mf', initial_requirement_shared_from_mf);
+                formData.append('team_name', team_name);
+                formData.append('cr_locked_by_vendor', cr_locked_by_vendor);
+                formData.append('mf_expect_timeline', mf_expect_timeline);
+                formData.append('requester_team', requester_team);
+                formData.append('cr_type', cr_type);
+                formData.append('completed_on', completed_on);
+                formData.append('assigned_from_brac', assigned_from_brac);
+                formData.append('uat_credential', uat_credential);
+                formData.append('satisfactory_level', satisfactory_level);
+
                 var btn = $(this);
                 btn.prop('disabled', true);
                 $('.spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
 
                 $.ajax({
-                    url: '{{ url('/admin/add-new-cr') }}',
+                    url: '{{ url('/item/add-new-item') }}',
                     type: "POST",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
                     //dataType: 'json',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    data: {
-                        cr_title: cr_title,
-                        jira_code: jira_code,
-                        jira_created: jira_created,
-                        approved_billable_effort: approved_billable_effort,
-                        category: category,
-                        vendor_name: vendor_name,
-                        vendor_proposed_timeline: vendor_proposed_timeline,
-                        priority: priority,
-                        cr_status: cr_status,
-                        business_analyst: business_analyst,
-                        uat_instance: uat_instance,
-                        cr_details: cr_details,
-                        initial_requirement_shared_from_mf: initial_requirement_shared_from_mf,
-                        team_name: team_name,
-                        cr_locked_by_vendor: cr_locked_by_vendor,
-                        mf_expect_timeline: mf_expect_timeline,
-                        requester_team: requester_team,
-                        cr_type: cr_type,
-                        completed_on: completed_on,
-                        assigned_from_brac: assigned_from_brac,
-                        uat_credential: uat_credential,
-                        satisfactory_level: satisfactory_level
-                    },
+                    data: formData,
                     success: function (response) {
                         btn.prop('disabled', false);
                         $('.spinner-icon').empty();
@@ -627,6 +682,8 @@
                             $('.mf_expect_timeline').val("");
                             $('.requester_team').val("");
                             $('.cr_type').val("");
+                            $('.cr_doc').val("");
+                            $('.custom-file-label').html('Select file');
                             $('.completed_on').val("");
                             $('.assigned_from_brac').val("");
                             $('.uat_credential').val("");
@@ -638,8 +695,8 @@
                                 $('#add-modal-lg').modal('hide');
                             }, 3200);
 
-                            var dataTable = $('#mf_cr_list').dataTable();
-                            dataTable.fnDestroy();
+                            $('#mf_cr_list').dataTable().fnClearTable();
+                            $('#mf_cr_list').dataTable().fnDestroy();
                             getMFCrList();
 
                         } else {
@@ -664,7 +721,7 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "{{ url('/admin/get-mf-cr-info') }}",
+                    url: "{{ url('/item/get-mf-item-info') }}",
                     data: {
                         _token: $('input[name="_token"]').val(),
                         cr_id: cr_id
@@ -760,42 +817,51 @@
                     return false;
                 }
 
+                let formData = new FormData();
+                var file_for_cr_doc = document.getElementById("edit_cr_doc");
+                if( file_for_cr_doc.files.length != 0 ){
+                    formData.append('cr_doc', $('.edit_cr_doc')[0].files[0]);
+                }
+
+                formData.append('cr_id', update_cr_id);
+                formData.append('cr_title', edit_cr_title);
+                formData.append('jira_code', edit_jira_code);
+                formData.append('jira_created', jira_created);
+                formData.append('approved_billable_effort', edit_approved_billable_effort);
+                formData.append('category', edit_category);
+                formData.append('vendor_name', edit_vendor_name);
+                formData.append('vendor_proposed_timeline', edit_vendor_proposed_timeline);
+                formData.append('priority', edit_priority);
+                formData.append('cr_status', edit_cr_status);
+                formData.append('business_analyst', edit_business_analyst);
+                formData.append('uat_instance', edit_uat_instance);
+                formData.append('cr_details', edit_cr_details);
+                formData.append('initial_requirement_shared_from_mf', edit_initial_requirement_shared_from_mf);
+                formData.append('team_name', edit_team_name);
+                formData.append('cr_locked_by_vendor', edit_cr_locked_by_vendor);
+                formData.append('mf_expect_timeline', edit_mf_expect_timeline);
+                formData.append('requester_team', edit_requester_team);
+                formData.append('cr_type', edit_cr_type);
+                formData.append('completed_on', edit_completed_on);
+                formData.append('assigned_from_brac', edit_assigned_from_brac);
+                formData.append('uat_credential', edit_uat_credential);
+                formData.append('satisfactory_level', edit_satisfactory_level);
+
                 var btn = $(this);
                 btn.prop('disabled', true);
                 $('.spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
 
                 $.ajax({
-                    url: '{{ url('/admin/update-mf-cr-info') }}',
+                    url: '{{ url('/item/update-mf-item-info') }}',
                     type: "POST",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
                     //dataType: 'json',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    data: {
-                        cr_id: update_cr_id,
-                        cr_title: edit_cr_title,
-                        jira_code: edit_jira_code,
-                        jira_created: jira_created,
-                        approved_billable_effort: edit_approved_billable_effort,
-                        category: edit_category,
-                        vendor_name: edit_vendor_name,
-                        vendor_proposed_timeline: edit_vendor_proposed_timeline,
-                        priority: edit_priority,
-                        cr_status: edit_cr_status,
-                        business_analyst: edit_business_analyst,
-                        uat_instance: edit_uat_instance,
-                        cr_details: edit_cr_details,
-                        initial_requirement_shared_from_mf: edit_initial_requirement_shared_from_mf,
-                        team_name: edit_team_name,
-                        cr_locked_by_vendor: edit_cr_locked_by_vendor,
-                        mf_expect_timeline: edit_mf_expect_timeline,
-                        requester_team: edit_requester_team,
-                        cr_type: edit_cr_type,
-                        completed_on: edit_completed_on,
-                        assigned_from_brac: edit_assigned_from_brac,
-                        uat_credential: edit_uat_credential,
-                        satisfactory_level: edit_satisfactory_level
-                    },
+                    data: formData,
                     success: function (response) {
                         btn.prop('disabled', false);
                         $('.spinner-icon').empty();
@@ -812,8 +878,8 @@
                                 $('#edit-modal-lg').modal('hide');
                             }, 3200);
 
-                            var dataTable = $('#mf_cr_list').dataTable();
-                            dataTable.fnDestroy();
+                            $('#mf_cr_list').dataTable().fnClearTable();
+                            $('#mf_cr_list').dataTable().fnDestroy();
                             getMFCrList();
 
                         } else {
@@ -843,7 +909,7 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "{{ url('/admin/delete-mf-cr') }}",
+                    url: "{{ url('/item/delete-mf-item') }}",
                     data: {
                         _token: $('input[name="_token"]').val(),
                         cr_id: cr_id
@@ -857,8 +923,8 @@
 
                             $('.alert-success').fadeOut(3000);
 
-                            var dataTable = $('#mf_cr_list').dataTable();
-                            dataTable.fnDestroy();
+                            $('#mf_cr_list').dataTable().fnClearTable();
+                            $('#mf_cr_list').dataTable().fnDestroy();
                             getMFCrList();
                         }else{
                             $('.delete_response_msg_area').html('<div class="alert alert-danger">\n' +
@@ -880,7 +946,7 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "{{ url('/admin/get-mf-cr-note-info') }}",
+                    url: "{{ url('/item/get-mf-item-note-info') }}",
                     data: {
                         _token: $('input[name="_token"]').val(),
                         cr_id: cr_id
@@ -901,7 +967,8 @@
             $(document).on('click', '.add_new_note_btn', function () {
                 var cr_master_id = $('.cr_master_id').val();
                 $('.notes_data_show_area').html('');
-                $('.note_list_btn').css('background-color', 'white');
+                $('.note_list_btn').css({'background-color':'white','color':'black'});
+                $('.comment_list_btn').css({'background-color':'white','color':'black'});
                 $('.loading_brac_img').css({'display':'block'});
                 var btn = $(this);
                 btn.prop('disabled', true);
@@ -909,7 +976,7 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "{{ url('/admin/get-add-note-template') }}",
+                    url: "{{ url('/item/get-add-note-template') }}",
                     data: {
                         cr_master_id: cr_master_id,
                         _token: $('input[name="_token"]').val()
@@ -961,7 +1028,7 @@
                 $('.spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
 
                 $.ajax({
-                    url: '{{ url('/admin/add-new-cr-store') }}',
+                    url: '{{ url('/item/add-item-note') }}',
                     type: "POST",
                     //dataType: 'json',
                     headers: {
@@ -1001,17 +1068,18 @@
 
             $(document).on('click', '.note_list_btn', function () {
 
-                $('.note_list_btn').css('background-color', 'white');
+                $('.note_list_btn').css({'background-color':'white','color':'black'});
+                $('.comment_list_btn').css({'background-color':'white','color':'black'});
                 var note_id = jQuery(this).data('note_id');
                 $('.loading_brac_img').css({'display':'block'});
                 $('.data_area_response_msg').html('');
                 $('.notes_data_show_area').html('');
-                jQuery(this).css('background-color', '#c1d5e1');
+                jQuery(this).css({'background-color':'#009A93','color':'white'});
 
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "{{ url('/admin/get-note-details') }}",
+                    url: "{{ url('/item/get-item-note-details') }}",
                     data: {
                         _token: $('input[name="_token"]').val(),
                         note_id: note_id
@@ -1035,6 +1103,16 @@
                 $('.edit_note_type').attr("readonly", false);
                 $('.edit_note_date').attr("readonly", false);
                 $('.edit_cr_notes').attr("readonly", false);
+
+            });
+
+            $(document).on('click', '.comment_enable_disable', function () {
+
+                $('.update_comment_btn_section').css({'display':'block'});
+                $('.comment_enable_disable').css({'display':'none'});
+                $('.edit_comment_type').attr("readonly", false);
+                $('.edit_comment_date').attr("readonly", false);
+                $('.edit_cr_comment').attr("readonly", false);
 
             });
 
@@ -1073,7 +1151,7 @@
                 $('.spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
 
                 $.ajax({
-                    url: '{{ url('/admin/update-cr-note') }}',
+                    url: '{{ url('/item/update-item-note') }}',
                     type: "POST",
                     //dataType: 'json',
                     headers: {
@@ -1117,37 +1195,168 @@
                 });
             });
 
+            $(document).on('click', '.update_comment_btn', function () {
+                $('.data_area_response_msg').empty();
+                var comment_id = $('.comment_id').val();
+                var edit_comment_type = $('.edit_comment_type').val();
+                var edit_comment_date = $('.edit_comment_date').val();
+                var edit_cr_comment = $('.edit_cr_comment').val();
+                var cr_master_id = $('.cr_master_id').val();
+                var edit_cr_comment_error = false;
+
+                $('.edit_comment_type').removeClass('input_error_mark');
+                $('.edit_comment_date').removeClass('input_error_mark');
+                $('.edit_cr_comment').removeClass('input_error_mark');
+
+                if (edit_comment_type == '') {
+                    $('.edit_comment_type').addClass('input_error_mark');
+                    edit_cr_comment_error = true;
+                }
+                if (edit_comment_date == '') {
+                    $('.edit_comment_date').addClass('input_error_mark');
+                    edit_cr_comment_error = true;
+                }
+                if (edit_cr_comment == '') {
+                    $('.edit_cr_comment').addClass('input_error_mark');
+                    edit_cr_comment_error = true;
+                }
+                if (edit_cr_comment_error){
+                    $('.data_area_response_msg').html('<div class="alert alert-danger"><strong>Please fill up required fields</strong></div>');
+                    return false;
+                }
+
+                var btn = $(this);
+                btn.prop('disabled', true);
+                $('.spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+                $.ajax({
+                    url: '{{ url('/item/update-item-comment') }}',
+                    type: "POST",
+                    //dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    data: {
+                        comment_id: comment_id,
+                        comment_type: edit_comment_type,
+                        comment_date: edit_comment_date,
+                        cr_master_id: cr_master_id,
+                        cr_comment: edit_cr_comment
+                    },
+                    success: function (response) {
+                        btn.prop('disabled', false);
+                        $('.spinner-icon').empty();
+
+                        if (response.responseCode == 1) {
+                            $('.data_area_response_msg').html('<div class="alert alert-success">\n' +
+                                '                                <strong>Success!</strong> ' + response.message + '\n' +
+                                '                            </div>');
+
+                            $('.alert-success').fadeOut(3000);
+
+                            $('.note_list_section').html(response.commentList);
+
+                            $('.update_comment_btn_section').css({'display':'none'});
+                            $('.comment_enable_disable').css({'display':'block'});
+                            $('.edit_comment_type').attr("readonly", true);
+                            $('.edit_comment_date').attr("readonly", true);
+                            $('.edit_cr_comment').attr("readonly", true);
+
+                        } else {
+                            $('.data_area_response_msg').html('<div class="alert alert-danger">\n' +
+                                '                                <strong>Error!</strong> ' + response.message + '\n' +
+                                '                            </div>');
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+
+                    }
+                });
+            });
+
+            $(document).on('click', '.checkBoxValAll', function () {
+                $("input:checkbox[name=checkBoxVal]:checked").each(function(){
+                    if ($(this).val() == 'all'){
+                        $('#checkboxSuccess1').prop('checked', true);
+                        $('#checkboxSuccess2').prop('checked', true);
+                        $('#checkboxSuccess6').prop('checked', true);
+                        $('#checkboxSuccess7').prop('checked', true);
+                        $('#checkboxSuccess8').prop('checked', true);
+                        $('#checkboxSuccess9').prop('checked', true);
+                        $('.deploy_start').val('');
+                        $('.deploy_end').val('');
+                        $('.deployDivSection').css('display','block');
+                    }
+                    return false;
+                });
+
+                $("input:checkbox:not(:checked)").each(function(){
+                    if ($(this).val() == 'all'){
+                        $('#checkboxSuccess1').prop('checked', false);
+                        $('#checkboxSuccess2').prop('checked', false);
+                        $('#checkboxSuccess6').prop('checked', false);
+                        $('#checkboxSuccess7').prop('checked', false);
+                        $('#checkboxSuccess8').prop('checked', false);
+                        $('#checkboxSuccess9').prop('checked', false);
+                        $('.deploy_start').val('');
+                        $('.deploy_end').val('');
+                        $('.deployDivSection').css('display','none')
+                    }
+                    return false;
+                });
+
+                $('#mf_cr_list').dataTable().fnClearTable();
+                $('#mf_cr_list').dataTable().fnDestroy();
+                getMFCrList();
+            });
+
             $(document).on('click', '.checkBoxVal', function () {
-                var dataTable = $('#mf_cr_list').dataTable();
-                dataTable.fnDestroy();
+                $('#mf_cr_list').dataTable().fnClearTable();
+                $('#mf_cr_list').dataTable().fnDestroy();
+                getMFCrList();
+            });
+
+            $(document).on('click', '.searchByDeployDate', function () {
+
+                var deploy_start = $('.deploy_start').val();
+                var deploy_end = $('.deploy_end').val();
+                if(deploy_start == ''){alert('Start date is required');return false;}
+                if(deploy_end == ''){alert('End date is required');return false;}
+                if(deploy_start > deploy_end){alert('Start date must be smaller than end date');return false;}
+
+                $('#checkboxSuccess6').prop('checked', false);
+                $('#mf_cr_list').dataTable().fnClearTable();
+                $('#mf_cr_list').dataTable().fnDestroy();
                 getMFCrList();
             });
 
             $(document).on('click', '.excel_export', function () {
 
-                var fap = false;
-                var ea = false;
+                var business = false;
+                var support = false;
                 var ongoing = false;
                 var deployed = false;
-                var tbd = false;
-                var halt = false;
-                var PendingDeployment = false;
+                var configurable = false;
+                var integration = false;
+                var deploy_start = '';
+                var deploy_end = '';
 
                 $("input:checkbox[name=checkBoxVal]:checked").each(function(){
-                    if ($(this).val() == 'fap'){
-                        fap = true;
-                    }else if($(this).val() == 'ea'){
-                        ea = true;
+                    if ($(this).val() == 'business'){
+                        business = true;
+                    }else if($(this).val() == 'support'){
+                        support = true;
                     }else if($(this).val() == 'ongoing'){
                         ongoing = true;
                     }else if($(this).val() == 'deployed'){
-                        done = true;
-                    }else if($(this).val() == 'tbd'){
-                        tbd = true;
-                    }else if($(this).val() == 'halt'){
-                        halt = true;
-                    }else if($(this).val() == 'PendingDeployment'){
-                        PendingDeployment = true;
+                        $('.deployDivSection').css('display','block')
+                        deployed = true;
+                        deploy_start = $('.deploy_start').val();
+                        deploy_end = $('.deploy_end').val();
+                    }else if($(this).val() == 'configurable'){
+                        configurable = true;
+                    }else if($(this).val() == 'integration'){
+                        integration = true;
                     }
                 });
 
@@ -1155,12 +1364,143 @@
                 btn.prop('disabled', true);
                 $('.export-spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
 
-                location.href = '{{ url('/admin/export-as-excel')}}'+'?fap='+fap+'&ea='+ea+'&ongoing='+ongoing+'&deployed='+deployed+'&tbd='+tbd+'&halt='+halt+'&PendingDeployment='+PendingDeployment;
+                location.href = '{{ url('/item/export-item-report-in-excel')}}'+'?business='+business+'&support='+support+'&ongoing='+ongoing+'&deployed='+deployed+'&configurable='+configurable+'&integration='+integration+'&deploy_start='+deploy_start+'&deploy_end='+deploy_end;
 
                 btn.prop('disabled', false);
                 $('.export-spinner-icon').empty();
             });
 
+            $(document).on('click', '.add_new_comment_btn', function () {
+                var cr_master_id = $('.cr_master_id').val();
+                $('.notes_data_show_area').html('');
+                $('.note_list_btn').css({'background-color':'white','color':'black'});
+                $('.comment_list_btn').css({'background-color':'white','color':'black'});
+                $('.loading_brac_img').css({'display':'block'});
+                var btn = $(this);
+                btn.prop('disabled', true);
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{{ url('/item/get-item-comment-template') }}",
+                    data: {
+                        cr_master_id: cr_master_id,
+                        _token: $('input[name="_token"]').val()
+                    },
+                    success: function (response) {
+                        $('.loading_brac_img').css({'display':'none'});
+                        btn.prop('disabled', false);
+                        if(response.responseCode == 1){
+                            $('.notes_data_show_area').html(response.html);
+                        }else{
+
+                        }
+                    }
+                });
+
+            });
+
+            $(document).on('click', '.add_comment_btn', function () {
+                $('.data_area_response_msg').empty();
+                var comment_type = $('.comment_type').val();
+                var comment_date = $('.comment_date').val();
+                var cr_comment = $('.cr_comment').val();
+                var cr_master_id = $('.cr_master_id').val();
+                var add_cr_comment_error = false;
+
+                $('.comment_type').removeClass('input_error_mark');
+                $('.comment_date').removeClass('input_error_mark');
+                $('.cr_comment').removeClass('input_error_mark');
+
+                if (comment_type == '') {
+                    $('.comment_type').addClass('input_error_mark');
+                    add_cr_comment_error = true;
+                }
+                if (comment_date == '') {
+                    $('.comment_date').addClass('input_error_mark');
+                    add_cr_comment_error = true;
+                }
+                if (cr_comment == '') {
+                    $('.cr_comment').addClass('input_error_mark');
+                    add_cr_comment_error = true;
+                }
+                if (add_cr_comment_error){
+                    $('.data_area_response_msg').html('<div class="alert alert-danger"><strong>Please fill up required fields</strong></div>');
+                    return false;
+                }
+
+                var btn = $(this);
+                btn.prop('disabled', true);
+                $('.spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+                $.ajax({
+                    url: '{{ url('/item/item-new-comment-store') }}',
+                    type: "POST",
+                    //dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    data: {
+                        comment_type: comment_type,
+                        comment_date: comment_date,
+                        cr_comment: cr_comment,
+                        cr_master_id: cr_master_id
+                    },
+                    success: function (response) {
+                        btn.prop('disabled', false);
+                        $('.spinner-icon').empty();
+
+                        if (response.responseCode == 1) {
+                            $('.data_area_response_msg').html('<div class="alert alert-success">\n' +
+                                '                                <strong>Success!</strong> ' + response.message + '\n' +
+                                '                            </div>');
+
+                            $('.management_comments_section').html(response.commentList);
+                            $('.cr_comment').val('');
+
+                            $('.alert-success').fadeOut(3000);
+
+                        } else {
+                            $('.data_area_response_msg').html('<div class="alert alert-danger">\n' +
+                                '                                <strong>Error!</strong> ' + response.message + '\n' +
+                                '                            </div>');
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+
+                    }
+                });
+            });
+
+            $(document).on('click', '.comment_list_btn', function () {
+
+                $('.note_list_btn').css({'background-color':'white','color':'black'});
+                $('.comment_list_btn').css({'background-color':'white','color':'black'});
+                var comment_id = jQuery(this).data('comment_id');
+                $('.loading_brac_img').css({'display':'block'});
+                $('.data_area_response_msg').html('');
+                $('.notes_data_show_area').html('');
+                jQuery(this).css({'background-color':'#009A93','color':'white'});
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{{ url('/item/get-item-detail-comment') }}",
+                    data: {
+                        _token: $('input[name="_token"]').val(),
+                        comment_id: comment_id
+                    },
+                    success: function (response) {
+                        $('.loading_brac_img').css({'display':'none'});
+                        if(response.responseCode == 1){
+                            $('.notes_data_show_area').html(response.html);
+                        }else{
+
+                        }
+                    }
+                });
+
+            });
 
         });
 

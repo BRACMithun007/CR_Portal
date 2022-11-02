@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="form-group">
-            <label for="exampleInput">CR Title</label>
+            <label for="exampleInput">Item Title</label>
             <textarea name="edit_cr_title" class="form-control edit_cr_title">{{$crData->cr_title}}</textarea>
         </div>
         <div class="form-group">
@@ -21,7 +21,7 @@
             <input name="edit_approved_billable_effort" type="text" value="{{$crData->approved_billable_effort}}" class="form-control edit_approved_billable_effort" placeholder="Approved billable effort">
         </div>
         <div class="form-group">
-            <label for="exampleInput">CR category</label>
+            <label for="exampleInput">Item category</label>
             <select class="form-control edit_category" name="edit_category">
                 <option value="">Select One</option>
                 <option value="Insurance" @if($crData->category == "Insurance")SELECTED @endif>Insurance</option>
@@ -46,7 +46,7 @@
         <div class="form-group">
             <label for="exampleInput">Priority</label>
             <select class="form-control edit_priority" name="edit_priority">
-                <option value="0" @if($crData->priority == "99")SELECTED @endif>N/A</option>
+                <option value="99" @if($crData->priority == "99")SELECTED @endif>N/A</option>
                 <option value="1" @if($crData->priority == "1")SELECTED @endif>1</option>
                 <option value="2" @if($crData->priority == "2")SELECTED @endif>2</option>
                 <option value="3" @if($crData->priority == "3")SELECTED @endif>3</option>
@@ -54,7 +54,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="exampleInput">CR Status</label>
+            <label for="exampleInput">Item Status</label>
             <select class="form-control edit_cr_status" name="edit_cr_status">
                 <option value="">Select One</option>
                 <option value="Ongoing" @if($crData->cr_status == "Ongoing")SELECTED @endif>Ongoing</option>
@@ -79,7 +79,7 @@
 
     <div class="col-md-6">
         <div class="form-group">
-            <label for="exampleInput">CR Details</label>
+            <label for="exampleInput">Item Details</label>
             <textarea name="edit_cr_details" class="form-control edit_cr_details">{{$crData->cr_details}}</textarea>
         </div>
         <div class="form-group">
@@ -99,7 +99,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="exampleInput">CR locked by vendor</label>
+            <label for="exampleInput">Item locked by vendor</label>
             <input name="edit_cr_locked_by_vendor"
                    @if($crData->cr_locked_by_vendor != '0000-00-00' && $crData->cr_locked_by_vendor != null) value="{{date("d-m-Y", strtotime($crData->cr_locked_by_vendor))}}" @endif
                    type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control edit_cr_locked_by_vendor my_datepicker" placeholder="CR locked by vendor">
@@ -115,16 +115,19 @@
             <input name="edit_requester_team" type="text" value="{{$crData->requester_team}}" class="form-control edit_requester_team" placeholder="Requester team">
         </div>
         <div class="form-group">
-            <label for="exampleInput">CR Type</label>
+            <label for="exampleInput">Item Type</label>
             <select class="form-control edit_cr_type" name="edit_cr_type">
                 <option value="">Select One</option>
-                <option value="CR" @if($crData->cr_type == "CR")SELECTED @endif>CR</option>
-                <option value="CR_Addition" @if($crData->cr_type == "CR_Addition")SELECTED @endif>CR (Addition)</option>
-                <option value="CR_One_Time" @if($crData->cr_type == "CR_One_Time")SELECTED @endif>CR (One Time)</option>
-                <option value="CR_Change" @if($crData->cr_type == "CR_Change")SELECTED @endif>CR (Change)</option>
-                <option value="Non_CR" @if($crData->cr_type == "Non_CR")SELECTED @endif>Non-CR</option>
-                <option value="Data_Correction" @if($crData->cr_type == "Data_Correction")SELECTED @endif>Data Correction</option>
+{{--                <option value="CR" @if($crData->cr_type == "CR")SELECTED @endif>CR</option>--}}
+                <option value="Core_Business" @if($crData->cr_type == "Core_Business")SELECTED @endif>Core Business</option>
                 <option value="Support_CR" @if($crData->cr_type == "Support_CR")SELECTED @endif>Support CR</option>
+                <option value="Configurable_Item" @if($crData->cr_type == "Configurable")SELECTED @endif>Configurable Item</option>
+                <option value="Integration" @if($crData->cr_type == "Integration")SELECTED @endif>Integration</option>
+                <option value="Data_Correction" @if($crData->cr_type == "Data_Correction")SELECTED @endif>Data Correction</option>
+{{--                <option value="CR_Addition" @if($crData->cr_type == "CR_Addition")SELECTED @endif>CR (Addition)</option>--}}
+{{--                <option value="CR_One_Time" @if($crData->cr_type == "CR_One_Time")SELECTED @endif>CR (One Time)</option>--}}
+{{--                <option value="CR_Change" @if($crData->cr_type == "CR_Change")SELECTED @endif>CR (Change)</option>--}}
+{{--                <option value="Non_CR" @if($crData->cr_type == "Non_CR")SELECTED @endif>Non-CR</option>--}}
             </select>
         </div>
         <div class="form-group">
@@ -159,9 +162,31 @@
             </select>
         </div>
     </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label for="exampleInputFile">Final CR/Item Document (Allowed PDF only)</label>
+            <div class="input-group">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input edit_cr_doc" name="edit_cr_doc " accept="application/pdf" id="edit_cr_doc">
+                    <label class="custom-file-label" for="exampleInputFile">
+                        @if($crData->cr_doc_link != "" && $crData->cr_doc_link != null)
+                            Already uploaded. choose file to change
+                        @else
+                            Choose file
+                        @endif
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
+    $('input[type="file"]').change(function(e){
+        var fileName = e.target.files[0].name;
+        $('.custom-file-label').html(fileName);
+    });
+
     $('.my_datepicker').datetimepicker({
         //   viewMode: 'years',
         format: 'DD-MM-YYYY',

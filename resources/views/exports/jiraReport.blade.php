@@ -2,22 +2,23 @@
 <table>
     <thead>
     <tr>
-        <th style="width: 100px;background-color: #3a6089; font-size: 13px;font-weight: bold;color: whitesmoke;">JIRA ID</th>
-        <th style="width: 300px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">CR Item Name</th>
-        <th style="width: 100px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">Created At</th>
-        <th style="width: 70px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">Priority</th>
-        <th style="width: 130px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">Requester Team</th>
-        <th style="width: 120px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">MF Tech Team</th>
-        <th style="width: 110px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">Delivery Date</th>
-        <th style="width: 110px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">Current Status</th>
-        <th style="width: 380px;background-color: #3a6089;font-size: 13px;font-weight: bold;color: whitesmoke;">Last Update</th>
+        <th style="width: 100px;background-color: #73b9b6;">JIRA ID</th>
+        <th style="width: 300px;background-color: #73b9b6;">CR Item Name</th>
+        <th style="width: 100px;background-color: #73b9b6;">Created At</th>
+        <th style="width: 70px;background-color: #73b9b6;">Priority</th>
+        <th style="width: 130px;background-color: #73b9b6;">Requester Team</th>
+        <th style="width: 120px;background-color: #73b9b6;">MF Tech Team</th>
+        <th style="width: 120px;background-color: #73b9b6;">MF Focal</th>
+        <th style="width: 110px;background-color: #73b9b6;">Delivery Date</th>
+        <th style="width: 110px;background-color: #73b9b6;">Current Status</th>
+        <th style="width: 380px;background-color: #73b9b6;">Last Update</th>
     </tr>
     </thead>
     <tbody>
     @foreach($reportData as $data)
         <tr>
             <td style="width: 100px;word-wrap: break-word;">
-                <a href="https://tim.brac.net/browse/{{ trim($data->jira_id) }}">{{ trim($data->jira_id) }}</a>
+                {{ trim($data->jira_id) }}
             </td>
             <td style="width: 300px;word-wrap: break-word;">{{ trim($data->cr_item_name) }}</td>
             <td style="width: 100px;word-wrap: break-word;">
@@ -36,6 +37,7 @@
             </td>
             <td style="width: 130px;word-wrap: break-word;">{{ trim($data->requester_team) }}</td>
             <td style="width: 120px;word-wrap: break-word;text-align: center;">{{ trim($data->team_name) }}</td>
+            <td style="width: 120px;word-wrap: break-word;text-align: center;">{{ trim($data->mf_focal) }}</td>
             <td style="width: 110px;word-wrap: break-word;">
                 @if($data->vendor_proposed_timeline != null && $data->vendor_proposed_timeline != '' && $data->vendor_proposed_timeline != '0000-00-00')
                     {{\Carbon\Carbon::parse($data->vendor_proposed_timeline)->format('d M Y')}}

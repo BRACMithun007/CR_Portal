@@ -33,18 +33,27 @@
                 <div class="row">
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>Loan</h3>
-                                <p>Monthly Repayment Schedule</p>
+                        <a href="{{url('calculators/loan-repayment-schedule')}}" class="small-box-footer">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>Loan</h3>
+                                    <p>Repayment Schedule</p>
+                                </div>
                             </div>
-                            <div class="icon">
-                                <i class="ion-pie-graph"></i>
-                            </div>
-                            <a href="{{url('loan/repayment-schedule-monthly')}}" class="small-box-footer">Enter..<i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
+                        </a>
                     </div>
                     <!-- ./col -->
+                    <div class="col-lg-3 col-6">
+                        <!-- small box -->
+                        <a href="{{url('calculators/loan-premium')}}" class="small-box-footer">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>Loan</h3>
+                                    <p>Premium Calculation</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
                 <!-- /.row -->
             </div><!-- /.container-fluid -->

@@ -70,35 +70,67 @@ class HomeController extends Controller
 //        }
 
       //  try {
-            $crCompletionCount = changeRequestMaster::where('is_archived', '=', 0)->where('cr_status', '=', 'Deployed')
-                ->where('completed_on', '!=', null)
-                ->where( DB::raw('YEAR(completed_on)'), '=', date("Y") )
-                ->where('completed_on', '!=', '')
-                ->groupBy('completionMonth')
-                ->get([
-                    'completed_on',
-                    DB::raw("COUNT(id) AS completedNumber"),
-                    DB::raw("MONTH(completed_on) As completionMonth"),
-                ])->toArray();
 
-            $crCompletionArray["Jan"] = 0;
-            $crCompletionArray["Feb"] = 0;
-            $crCompletionArray["Mar"] = 0;
-            $crCompletionArray["Apr"] = 0;
-            $crCompletionArray["May"] = 0;
-            $crCompletionArray["Jun"] = 0;
-            $crCompletionArray["Jul"] = 0;
-            $crCompletionArray["Aug"] = 0;
-            $crCompletionArray["Sep"] = 0;
-            $crCompletionArray["Oct"] = 0;
-            $crCompletionArray["Nov"] = 0;
-            $crCompletionArray["Dec"] = 0;
+        $crCompletionCount = changeRequestMaster::where('is_archived', '=', 0)->where('cr_status', '=', 'Deployed')
+            ->where('completed_on', '!=', null)
+            ->where( DB::raw('YEAR(completed_on)'), '=', date("Y") )
+            ->get([
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Jan' THEN 1 END) AS Core_Business_jan"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Feb' THEN 1 END) AS Core_Business_feb"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Mar' THEN 1 END) AS Core_Business_mar"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Apr' THEN 1 END) AS Core_Business_apr"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'May' THEN 1 END) AS Core_Business_may"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Jun' THEN 1 END) AS Core_Business_jun"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Jul' THEN 1 END) AS Core_Business_jul"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Aug' THEN 1 END) AS Core_Business_aug"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Sep' THEN 1 END) AS Core_Business_sep"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Oct' THEN 1 END) AS Core_Business_oct"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Nov' THEN 1 END) AS Core_Business_nov"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Core_Business' AND DATE_FORMAT(completed_on, '%b') = 'Dec' THEN 1 END) AS Core_Business_dec"),
 
-            foreach ($crCompletionCount as $data){
-                $crCompletionArray[date('M',strtotime($data['completed_on']))] = $data['completedNumber'];
-            }
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Jan' THEN 1 END) AS Support_CR_jan"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Feb' THEN 1 END) AS Support_CR_feb"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Mar' THEN 1 END) AS Support_CR_mar"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Apr' THEN 1 END) AS Support_CR_apr"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'May' THEN 1 END) AS Support_CR_may"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Jun' THEN 1 END) AS Support_CR_jun"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Jul' THEN 1 END) AS Support_CR_jul"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Aug' THEN 1 END) AS Support_CR_aug"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Sep' THEN 1 END) AS Support_CR_sep"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Oct' THEN 1 END) AS Support_CR_oct"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Nov' THEN 1 END) AS Support_CR_nov"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Support_CR' AND DATE_FORMAT(completed_on, '%b') = 'Dec' THEN 1 END) AS Support_CR_dec"),
 
-        $public_html = strval(view("dashboard.cr_area_chart",compact('crCompletionArray')));
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Jan' THEN 1 END) AS Configurable_jan"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Feb' THEN 1 END) AS Configurable_feb"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Mar' THEN 1 END) AS Configurable_mar"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Apr' THEN 1 END) AS Configurable_apr"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'May' THEN 1 END) AS Configurable_may"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Jun' THEN 1 END) AS Configurable_jun"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Jul' THEN 1 END) AS Configurable_jul"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Aug' THEN 1 END) AS Configurable_aug"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Sep' THEN 1 END) AS Configurable_sep"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Oct' THEN 1 END) AS Configurable_oct"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Nov' THEN 1 END) AS Configurable_nov"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Configurable' AND DATE_FORMAT(completed_on, '%b') = 'Dec' THEN 1 END) AS Configurable_dec"),
+
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Jan' THEN 1 END) AS Integration_jan"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Feb' THEN 1 END) AS Integration_feb"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Mar' THEN 1 END) AS Integration_mar"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Apr' THEN 1 END) AS Integration_apr"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'May' THEN 1 END) AS Integration_may"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Jun' THEN 1 END) AS Integration_jun"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Jul' THEN 1 END) AS Integration_jul"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Aug' THEN 1 END) AS Integration_aug"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Sep' THEN 1 END) AS Integration_sep"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Oct' THEN 1 END) AS Integration_oct"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Nov' THEN 1 END) AS Integration_nov"),
+                DB::raw("COUNT(CASE WHEN cr_type = 'Integration' AND DATE_FORMAT(completed_on, '%b') = 'Dec' THEN 1 END) AS Integration_dec"),
+            ])->toArray();
+
+            $monthWiseCrCompletion = $crCompletionCount[0];
+
+            $public_html = strval(view("dashboard.cr_area_chart",compact('monthWiseCrCompletion')));
 
             return response()->json( ['responseCode'=>1,'html'=>$public_html]);
 

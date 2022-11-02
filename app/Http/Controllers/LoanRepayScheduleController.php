@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\loanRepaymentSchedule;
+use App\Exports\reportExportForm;
 use App\Libraries\aclHandler;
 use App\Libraries\BusinessDaysCalculator;
 use App\LoanRepayConfig;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LoanRepayScheduleController extends Controller
 {
@@ -22,7 +25,7 @@ class LoanRepayScheduleController extends Controller
             die('No access !');
         }
 
-        return view('loan.loan_calc');
+        return view('loan.repayment_schedule');
     }
 
     /**
@@ -33,6 +36,7 @@ class LoanRepayScheduleController extends Controller
 
         $rules = [
             'loan_amount'  => 'required',
+            'interest_percentage'  => 'required',
             'loan_period'    => 'required'
         ];
 
@@ -43,54 +47,61 @@ class LoanRepayScheduleController extends Controller
 
         $loan_amount = intval($request->get('loan_amount'));
         $loan_period = intval($request->get('loan_period'));
+        $interest = intval($request->get('interest_percentage'));
 
-        $loanConfResult = LoanRepayConfig::where('period_in_month','=',$loan_period)
-                                        ->get();
-        $loanConfData = [];
-        foreach ($loanConfResult as $result){
-            if ($loan_amount >= $result->loan_amount_start && $loan_amount <= $result->loan_amount_end){
-                $loanConfData = [
-                    'interest_rate' => $result->interest_rate,
-                    'monthly_pay_factor' => $result->monthly_pay_factor,
-                    'disbursement_no_of_date' => $result->disbursement_no_of_date,
-                    'period_in_month' => $result->period_in_month,
-                ];
-                break;
-            }
-        }
+        // Calculation per thousand
+        $amount = 1000;
+        $rate = ($interest/100) / 12; // Monthly interest rate
+        $term = $loan_period; // Term in months
+        $emi = $amount * $rate * (pow(1 + $rate, $term) / (pow(1 + $rate, $term) - 1));
+        $monthlyEmi = ceil($emi);
+        $EmiInOneTaka = $monthlyEmi/1000;
 
-        if ( empty($loanConfData) ) {
-            return response()->json( ['responseCode'=>0,'message'=>'Not valid input']);
-        }
+        $loanConfData = [
+            'interest_rate' => $interest,
+            'monthly_pay_factor' => $EmiInOneTaka,
+            'disbursement_no_of_date' => 7,
+            'period_in_month' => $loan_period,
+        ];
 
-        $total_interest = intval($this->totalInterestCalc($loan_amount,$result->interest_rate,$loan_period));
+        $total_interest = intval($this->totalInterestCalc($loan_amount,$loanConfData['interest_rate'],$loanConfData['period_in_month']));
         $disbursement_date = $this->businessDayCalcFromNow(7);
         $provision_start_date = $this->businessDayCalcFromSpecificDate($disbursement_date,30);
 
         $headerCalcData = [
-            'monthly_payment' => round($loan_amount*$result->monthly_pay_factor),
-            'total_interest' => $total_interest,
-            'total_realizable' => $loan_amount+$total_interest,
+            'monthly_payment' => round($loan_amount*$loanConfData['monthly_pay_factor']),
             'disbursement_date' => date('M d, Y', strtotime($disbursement_date)),
             'provision_start_date' => date('M d, Y', strtotime($provision_start_date))
         ];
 
 
-      //  dd($loanConfData['interest_rate']/100);
         //*********************** repayment schedule calculation *************************
         $startCountDate = $disbursement_date;
         $remainingPrincipal = $loan_amount;
         $allScheduleData = [];
-        $interestFactor = ($loanConfData['interest_rate']/100)/365;
-        $interestFactorPerDay = floatval(number_format((float)$interestFactor, 6, '.', ''));
+        $interestFactorPerDay = ($loanConfData['interest_rate']/100)/365;
 
+        $specialCountFlip = 1;
+        $grandTotalInterest = 0;
         for ($i = 1; $i<$loan_period+1 ; $i++){
-            $nextInstallmentDate = $this->businessDayCalcFromSpecificDate($startCountDate,30);
-            $dateDifference = (date_diff(date_create($startCountDate), date_create($nextInstallmentDate)))->days;
-            $monthlyInterest = round($interestFactorPerDay*$dateDifference*$remainingPrincipal,0);
 
-            $monthlyTotalPayment = ($i == $loan_period) ? $remainingPrincipal : $headerCalcData['monthly_payment'];
-            $monthlyPrincipal = $monthlyTotalPayment - intval($monthlyInterest);
+            $dateDifference = ($specialCountFlip % 2 == 0)?30:31;
+            $nextInstallmentDate = $this->businessDayCalcFromSpecificDate($startCountDate,$dateDifference);
+
+            if($i == $loan_period){
+                $monthlyPrincipal = $remainingPrincipal;
+                $monthlyInterest = round($interestFactorPerDay*$dateDifference*$monthlyPrincipal,0);
+                $monthlyTotalPayment =  $remainingPrincipal+$monthlyInterest;
+            }else{
+                if($i == 1){$dateDifference = 29;}else{$specialCountFlip ++;}
+                $monthlyInterest = round($interestFactorPerDay*$dateDifference*$remainingPrincipal,0);
+                $monthlyTotalPayment = $headerCalcData['monthly_payment'];
+                $monthlyPrincipal = $monthlyTotalPayment - intval($monthlyInterest);
+            }
+
+            $grandTotalInterest += $monthlyInterest;
+            if($specialCountFlip % 6 == 0){$specialCountFlip =1;}
+
             $monthlyBeginningBalance = $remainingPrincipal;
             $monthlyEndingBalance = ($i == $loan_period) ? 0 : $remainingPrincipal - $monthlyPrincipal;
 
@@ -108,12 +119,32 @@ class LoanRepayScheduleController extends Controller
 
             $allScheduleData[] = $scheduleData;
         }
+
+        $headerCalcData['total_interest'] = $grandTotalInterest;
+        $headerCalcData['total_realizable'] = $loan_amount+$headerCalcData['total_interest'];
         //***********************************************************
 
         $public_html = strval(view("loan.repay_schedule_template", compact('loanConfData','headerCalcData','allScheduleData')));
 
         return response()->json(['responseCode' => 1, 'html' => $public_html, 'message'=>'Successfully fetches']);
 
+    }
+
+
+    public function excelExport(Request $request)
+    {
+
+        try {
+
+            $loan_amount = trim($request->get('loan_amount'));
+            $loan_period = trim($request->get('loan_period'));
+            $interest_percentage = trim($request->get('interest_percentage'));
+
+            return Excel::download(new loanRepaymentSchedule($loan_amount,$loan_period,$interest_percentage), 'LOAN_REPAYMENT_SCHEDULE.xlsx');
+
+        } catch (\Exception $e) {
+            die('Something wrong');
+        }
     }
 
     /**
@@ -174,7 +205,17 @@ class LoanRepayScheduleController extends Controller
         $oneDayPrev = date('Y-m-d', strtotime("+".($addedDays-1)." day", strtotime($startDate)));
         $calculator = new BusinessDaysCalculator(
             new DateTime($oneDayPrev), // Start Today
-            [new DateTime("2022-12-16")],
+            [
+                new DateTime("2022-12-16"),
+                new DateTime("2023-02-21"),
+                new DateTime("2023-03-08"),
+                new DateTime("2023-03-26"),
+                new DateTime("2023-04-18"),
+                new DateTime("2023-04-23"),
+                new DateTime("2023-05-01"),
+                new DateTime("2023-06-28"),
+                new DateTime("2023-06-29")
+            ],
             [BusinessDaysCalculator::SATURDAY, BusinessDaysCalculator::FRIDAY]
         );
         $calculator->addBusinessDays(1); // Add three business days

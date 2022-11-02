@@ -7,7 +7,12 @@
 {{--    <link rel="stylesheet" type="text/css" href="{{ asset("admin_src/datatable/responsive.bootstrap.min.css") }}" />--}}
 
     <style>
-
+        .input_error_mark{
+            border-color: red;
+        }
+        .input_valid_mark{
+            border-color: #d9c6c6;
+        }
     </style>
 @endsection
 
@@ -19,12 +24,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Monthly Repayment Schedule</h1>
+                        <h1>Loan Repayment Schedule</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{url('/')}}">Calculators</a></li>
-                            <li class="breadcrumb-item active">Monthly Repayment Schedule</li>
+                            <li class="breadcrumb-item active">Loan Repayment Schedule</li>
                         </ol>
                     </div>
                 </div>
@@ -39,21 +44,33 @@
                         <div class="card card-primary card-outline">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-md-3 ">
-                                        <input type="number" min="0" class="form-control loan_amount" placeholder="Enter loan amount" oninput="validity.valid||(value='');">
+                                    <div class="col-md-2 ">
+                                        <b>Loan Amount </b><input type="number" min="0" class="form-control loan_amount" oninput="validity.valid||(value='');">
+                                    </div>
+                                    <div class="col-md-2 ">
+                                        <b>Interest Rate (%) </b><input type="number" min="0" class="form-control interest_percentage" oninput="validity.valid||(value='');">
                                     </div>
                                     <div class="col-md-3 ">
-                                        <select class="form-control loan_period">
+                                        <b>Loan Period </b><select class="form-control loan_period">
                                             <option value="">Select loan period</option>
+                                            <option value="3">3 Months</option>
                                             <option value="6">6 Months</option>
                                             <option value="9">9 Months</option>
                                             <option value="12">12 Months</option>
                                             <option value="18">18 Months</option>
                                             <option value="24">24 Months</option>
+                                            <option value="36">36 Months</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6 pull-left">
-                                        <button class="btn btn-primary btn-md calculate_schedule"> Calculate <b class="spinner-icon"></b></button>
+                                    <div class="col-md-2 pull-left">
+                                        <div>&nbsp;</div>
+                                        <button class="btn btn-md calculate_schedule" style="background-color: #009A93;color: white;"> Calculate <b class="spinner-icon"></b></button>
+                                    </div>
+                                    <div class="col-md-2 pull-right">
+                                        <div>&nbsp;</div>
+                                        <button type="button" class="btn btn-primary float-right excel_export" style="background-color: #009A93;">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
                                     </div>
                                 </div>
 
@@ -91,27 +108,77 @@
 
         $(document).ready(function() {
 
-            $(document).on('click', '.calculate_schedule', function () {
-                $('.loading_brac_img').css({'display':'block'});
-                $('.response_msg_area').empty();
+            $(document).on('click', '.excel_export', function () {
+
                 var loan_amount = $('.loan_amount').val();
                 var loan_period = $('.loan_period').val();
+                var interest_percentage = $('.interest_percentage').val();
+
+                $('.loan_amount').removeClass('input_error_mark');
+                $('.loan_period').removeClass('input_error_mark');
+                $('.interest_percentage').removeClass('input_error_mark');
+                var has_input_error = false;
 
                 if (loan_amount == '') {
-                    alert("please enter loan amount");
-                    return false;
+                    $('.loan_amount').addClass('input_error_mark');
+                    has_input_error = true;
                 }
                 if (loan_period == '') {
-                    alert("please select loan period");
+                    $('.loan_period').addClass('input_error_mark');
+                    has_input_error = true;
+                }
+                if (interest_percentage == '') {
+                    $('.interest_percentage').addClass('input_error_mark');
+                    has_input_error = true;
+                }
+                if (has_input_error){
                     return false;
                 }
+
+                var btn = $(this);
+                btn.prop('disabled', true);
+
+                location.href = '{{ url('/calculators/export-loan-repayment-schedule-as-excel')}}'+'?loan_amount='+loan_amount+'&loan_period='+loan_period+'&interest_percentage='+interest_percentage;
+
+                btn.prop('disabled', false);
+                $('.export-spinner-icon').empty();
+            });
+
+            $(document).on('click', '.calculate_schedule', function () {
+                var loan_amount = $('.loan_amount').val();
+                var loan_period = $('.loan_period').val();
+                var interest_percentage = $('.interest_percentage').val();
+
+                $('.loan_amount').removeClass('input_error_mark');
+                $('.loan_period').removeClass('input_error_mark');
+                $('.interest_percentage').removeClass('input_error_mark');
+                var has_input_error = false;
+
+                if (loan_amount == '') {
+                    $('.loan_amount').addClass('input_error_mark');
+                    has_input_error = true;
+                }
+                if (loan_period == '') {
+                    $('.loan_period').addClass('input_error_mark');
+                    has_input_error = true;
+                }
+                if (interest_percentage == '') {
+                    $('.interest_percentage').addClass('input_error_mark');
+                    has_input_error = true;
+                }
+                if (has_input_error){
+                    return false;
+                }
+
+                $('.loading_brac_img').css({'display':'block'});
+                $('.response_msg_area').empty();
 
                 var btn = $(this);
                 btn.prop('disabled', true);
                 $('.spinner-icon').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
 
                 $.ajax({
-                    url: '{{ url('/loan/get-repayment-schedule') }}',
+                    url: '{{ url('/calculators/get-loan-repayment-schedule') }}',
                     type: "POST",
                     //dataType: 'json',
                     headers: {
@@ -119,6 +186,7 @@
                     },
                     data: {
                         loan_amount: loan_amount,
+                        interest_percentage: interest_percentage,
                         loan_period: loan_period
                     },
                     success: function (response) {
@@ -127,8 +195,6 @@
                         $('.loading_brac_img').css({'display':'none'});
                         if (response.responseCode == 1) {
                             $('.response_msg_area').html(response.html);
-
-
 
                         } else {
                             $('.response_msg_area').html('<div class="alert alert-danger">\n' +

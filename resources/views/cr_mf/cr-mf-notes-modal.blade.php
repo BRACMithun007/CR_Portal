@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-3">
         @if(App\Libraries\aclHandler::hasActionAccess('mf_cr_write') == true)
-            <button class="btn btn-primary btn-block mb-3 add_new_note_btn">Add New</button>
+            <button class="btn btn-block mb-3 add_new_note_btn" style="background-color:#009A93;color:white;">Add Note</button>
         @endif
         <div class="card">
             <div class="card-header">
@@ -31,7 +31,7 @@
 
     </div>
     <!-- /.col -->
-    <div class="col-md-9">
+    <div class="col-md-6">
         <div class="card card-primary card-outline">
             <div class="card-header">
                 <h3 class="card-title"><b style="font-weight: bold;">Title: </b> {{$crData->cr_title}}</h3>
@@ -54,6 +54,37 @@
         <!-- /.card -->
     </div>
     <!-- /.col -->
+    <div class="col-md-3">
+        @if(Auth::user()->type == 'Management')
+            <button class="btn btn-block mb-3 add_new_comment_btn" style="background-color:#009A93;color:white;">Add Comment</button>
+        @endif
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Management comments</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0 management_comments_section " style="max-height: 300px;overflow-y: auto;">
+                <ul class="nav nav-pills flex-column">
+                    @foreach($crCommentData as $comment)
+                        <li class="nav-item">
+                            <a href="#" class="nav-link comment_list_btn" data-comment_id="{{$comment->id}}">
+                                <i class="far fa-envelope"></i> &nbsp; {{\Carbon\Carbon::parse($comment->note_date)->format('d M Y')}}
+{{--                                <span class="badge bg-primary float-right">{{$note->note_type}}</span>--}}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+
+            </div>
+            <!-- /.card-body -->
+        </div>
+
+    </div>
 </div>
 
 <script>
