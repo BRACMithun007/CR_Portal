@@ -13,6 +13,10 @@
             background-color: #17a2b8;
             color: #fff;
         }
+        .nav-link .active .nav-treeview{
+            display: none;
+            list-style: none;
+            padding: 0;
         .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active {
             background-color: #009A93 !important;
         }
