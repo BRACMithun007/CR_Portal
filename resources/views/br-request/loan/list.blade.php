@@ -121,7 +121,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">New Request CR</h4>
+                    <h4 class="modal-title">New Business Request for Loan</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -131,16 +131,53 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleInput">CR Title</label>
+                                <label for="exampleInput">Loan Product Name</label>
                                 <textarea name="cr_title" class="form-control cr_title"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="exampleInput">jira ID</label>
-                                <input name="jira_code" type="text" class="form-control jira_code" placeholder="jira ID">
+                                <label for="exampleInput">Eligible Member Category</label>
+                                <input name="jira_code" type="text" class="form-control jira_code" placeholder="Eligible Member">
                             </div>
                             <div class="form-group">
-                                <label for="exampleInput">jira Created</label>
-                                <input name="jira_created" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" type="text" class="form-control jira_created my_datepicker" placeholder="jira creating date">
+                                <label for="exampleInput">Interest Rate</label>
+                                <input name="jira_code" type="text" class="form-control jira_code" placeholder="24%, 22%, 20%, 18%">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Loan Duration</label>
+                                <input name="jira_code" type="text" class="form-control jira_code" placeholder="2, 3, 4, 6, 9, 12, 18, 24, 36 Months">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Micro-Insurance</label>
+                                <select class="form-control category" name="category">
+                                    <option value="">Select One</option>
+                                    <option value="Mandatory">Mandatory</option>
+                                    <option value="Optional">Optional</option>
+                                    <option value="not_applicable">Not Applicable</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">New report</label>
+                                <select class="form-control new_report" name="new_report">
+                                    <option value="">Select One</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Parallel Loan Allowed</label>
+                                <select class="form-control parallel_loan_allowed" name="parallel_loan_allowed">
+                                    <option value="">Select One</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Repeat Clients Allowed</label>
+                                <select class="form-control parallel_loan_allowed" name="parallel_loan_allowed">
+                                    <option value="">Select One</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInput">CR Category</label>
@@ -153,12 +190,75 @@
                                     <option value="Others">Others</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="exampleInput">jira Created</label>
+                                <input name="jira_created" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" type="text" class="form-control jira_created my_datepicker" placeholder="jira creating date">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Requested By</label>
+                                <input name="requested_by" type="text" class="form-control requested_by" placeholder="Name of the Request Person">
+                            </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleInput">CR Details</label>
+                                <label for="exampleInput">Details</label>
                                 <textarea name="cr_details" class="form-control cr_details"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Collection Frequency</label>
+                                <select class="form-control category" name="category">
+                                    <option value="">Select One</option>
+                                    <option value="Weekly">Weekly</option>
+                                    <option value="Bi-Weekly">Bi-Weekly</option>
+                                    <option value="Monthly">Monthly</option>
+{{--                                    <option value="EA_B2B">Integration</option>--}}
+{{--                                    <option value="Others">Others</option>--}}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">No. of Installment</label>
+                                <input name="no_of_installment" type="text" class="form-control no_of_installment" placeholder="4, 6, 9, 12, 18, 24, 36 & Single payment">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Loan Ceiling Amount</label>
+                                <input name="no_of_installment" type="text" class="form-control no_of_installment" placeholder="0 to 10,00,000 TK, approved as table of authority.">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Mode of Payment</label>
+                                <select class="form-control team_name" name="team_name">
+                                    <option value="">Select One</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="bKash">bKash</option>
+                                    <option value="Rocket">Rocket</option>
+                                    <option value="Bank">Bank</option>
+                                    <option value="All">All</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Tab Integration</label>
+                                <select class="form-control tab_integration" name="tab_integration">
+                                    <option value="">Select One</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Savings Required for Disbursement</label>
+                                <select class="form-control parallel_loan_allowed" name="parallel_loan_allowed">
+                                    <option value="">Select One</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInput">Member Age Limit</label>
+                                <select class="form-control member_age_limit" name="member_age_limit">
+                                    <option value="">Select One</option>
+                                    <option value="18_65">18 to 65 Years</option>
+                                    <option value="65_75 Years">65 to 75 Years</option>
+                                    <option value="All">All</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInput">Initiate by the Requester Team</label>
